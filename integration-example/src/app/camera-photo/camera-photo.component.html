@@ -1,0 +1,19 @@
+<div #loading class="justify-content-center mt-5">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div>
+    @if (!captured) {
+    <video class="video" #video width="800" height="600" autoplay></video>
+
+    <button class="btn btn-primary btn-lg" (click)="capture()">Capturar</button>
+    }
+
+    <canvas class="video" #canvas width="800" height="600" style="border: 1px solid black;"
+        [style.visibility]="this.captured ? 'visible' : 'hidden'"></canvas>
+    @if (captured) {
+    <img width="800" height="600" #imageResult [src]="imageUrl" alt="Resulting Image" />
+    }
+</div>

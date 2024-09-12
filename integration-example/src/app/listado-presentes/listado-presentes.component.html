@@ -1,0 +1,32 @@
+<div class="row justify-content-md-center">
+    <div class="col-md-auto mt-5">
+        <h2>Listado de Alumnos Presentes</h2>
+        <div class="row ">
+            <div class="col-md-auto">
+                <div class="container mt-5">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (alumno of listadoAlumnos; let index = $index; track alumno){
+                            <tr>
+                                <td>{{ index }}</td>
+                                <td>{{ alumno }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row justify-content-md-center">
+
+                    <button class="btn btn-primary" (click)="loadListadoAlumnos()"> Refrescar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
