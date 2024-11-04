@@ -2,6 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ERROR_MESSAGES } from './error-messages.es';
 
 @Injectable({ providedIn: 'root' })
 export class CheckService {
@@ -14,5 +15,11 @@ export class CheckService {
 
   getListadoAlumnos(): Observable<object> {
     return this.http.get('http://127.0.0.1:8000/get_presentes_del_dia', { responseType: 'json' });
+  }
+
+  getErrorMessage(error: any): string {
+    const errorKey = Object.keys(error)[0];
+    const errorMessage = ERROR_MESSAGES[errorKey as keyof typeof ERROR_MESSAGES];
+    return errorMessage.replace('{{requiredLength}}', error[errorKey].requiredLength);
   }
 }
