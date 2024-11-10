@@ -1,4 +1,4 @@
-"use client";  // Agrega esto al principio
+"use client"; // Agrega esto al principio
 
 import React, { useState } from 'react'
 import { Button } from "@/app/components/ui/button"
@@ -6,7 +6,7 @@ import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
-import { AlertCircle, CheckCircle2, Menu } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Component() {
@@ -19,12 +19,10 @@ export default function Component() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Aquí iría la lógica real de autenticación
     setIsLoggedIn(true)
   }
 
   const handleGenerateApiKey = () => {
-    // Aquí iría la lógica real de generación de API Key
     setApiKey('sk_test_' + Math.random().toString(36).substr(2, 9))
   }
 
@@ -32,7 +30,6 @@ export default function Component() {
     { id: 'installation', name: 'Instalación' },
     { id: 'usage', name: 'Uso Básico' },
     { id: 'checkIn', name: 'checkIn()' },
-    { id: 'checkOut', name: 'checkOut()' },
     { id: 'getAttendanceRecord', name: 'getAttendanceRecord()' },
     { id: 'updateUser', name: 'updateUser()' },
     { id: 'deleteUser', name: 'deleteUser()' },
@@ -46,7 +43,7 @@ export default function Component() {
           <ul>
             {methods.map((method) => (
               <li key={method.id} className="mb-2">
-                <Link 
+                <Link
                   href={`#${method.id}`}
                   className={`block p-2 rounded ${activeMethod === method.id ? 'bg-primary text-primary-foreground' : 'hover:bg-gray-200'}`}
                   onClick={() => {
@@ -65,13 +62,13 @@ export default function Component() {
       {/* Main content */}
       <main className="flex-1 p-4">
         <h1 className="text-3xl font-bold mb-6">SDK de Reconocimiento Facial - Documentación</h1>
-        
+
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-4">
             <TabsTrigger value="docs">Documentación</TabsTrigger>
             <TabsTrigger value="auth">{isLoggedIn ? 'API Key' : 'Registro/Login'}</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="docs">
             <Card>
               <CardHeader>
@@ -87,7 +84,7 @@ export default function Component() {
                     </pre>
                   </>
                 )}
-                
+
                 {activeMethod === 'usage' && (
                   <>
                     <h2 id="usage" className="text-xl font-semibold mb-2">Uso básico</h2>
@@ -108,11 +105,11 @@ async function handleCheckIn(faceImageBase64) {
                     </pre>
                   </>
                 )}
-                
+
                 {activeMethod === 'checkIn' && (
                   <>
                     <h2 id="checkIn" className="text-xl font-semibold mb-2">checkIn(faceImage)</h2>
-                    <p className="mb-2">Registra la entrada de un usuario utilizando una imagen facial.</p>
+                    <p className="mb-2">Registra la entrada de un usuario utilizando una imagen facial y devuelve el identificador.</p>
                     <pre className="bg-gray-100 p-2 rounded mb-4">
                       {`const result = await sdk.checkIn(faceImageBase64);`}
                     </pre>
@@ -120,35 +117,19 @@ async function handleCheckIn(faceImageBase64) {
                     <ul className="list-disc pl-5 mb-2">
                       <li><code>faceImage</code>: String (Base64) - Imagen facial del usuario</li>
                     </ul>
-                    <p>Retorna: Objeto con información del check-in realizado</p>
-                  </>
-                )}
-
-                {activeMethod === 'checkOut' && (
-                  <>
-                    <h2 id="checkOut" className="text-xl font-semibold mb-2">checkOut(faceImage)</h2>
-                    <p className="mb-2">Registra la salida de un usuario utilizando una imagen facial.</p>
-                    <pre className="bg-gray-100 p-2 rounded mb-4">
-                      {`const result = await sdk.checkOut(faceImageBase64);`}
-                    </pre>
-                    <p>Parámetros:</p>
-                    <ul className="list-disc pl-5 mb-2">
-                      <li><code>faceImage</code>: String (Base64) - Imagen facial del usuario</li>
-                    </ul>
-                    <p>Retorna: Objeto con información del check-out realizado</p>
+                    <p>Retorna: Objeto con el identificador del usuario</p>
                   </>
                 )}
 
                 {activeMethod === 'getAttendanceRecord' && (
                   <>
-                    <h2 id="getAttendanceRecord" className="text-xl font-semibold mb-2">getAttendanceRecord(userId, startDate, endDate)</h2>
-                    <p className="mb-2">Obtiene el registro de asistencia de un usuario en un rango de fechas.</p>
+                    <h2 id="getAttendanceRecord" className="text-xl font-semibold mb-2">getAttendanceRecord(startDate, endDate)</h2>
+                    <p className="mb-2">Obtiene el registro de asistencia completo en un rango de fechas.</p>
                     <pre className="bg-gray-100 p-2 rounded mb-4">
-                      {`const record = await sdk.getAttendanceRecord('user123', '2023-01-01', '2023-12-31');`}
+                      {`const record = await sdk.getAttendanceRecord('2023-01-01', '2023-12-31');`}
                     </pre>
                     <p>Parámetros:</p>
                     <ul className="list-disc pl-5 mb-2">
-                      <li><code>userId</code>: String - ID del usuario</li>
                       <li><code>startDate</code>: String - Fecha de inicio (formato: 'YYYY-MM-DD')</li>
                       <li><code>endDate</code>: String - Fecha de fin (formato: 'YYYY-MM-DD')</li>
                     </ul>
@@ -158,15 +139,15 @@ async function handleCheckIn(faceImageBase64) {
 
                 {activeMethod === 'updateUser' && (
                   <>
-                    <h2 id="updateUser" className="text-xl font-semibold mb-2">updateUser(userId, userData)</h2>
-                    <p className="mb-2">Actualiza la información de un usuario.</p>
+                    <h2 id="updateUser" className="text-xl font-semibold mb-2">updateUser(userId, faceImage)</h2>
+                    <p className="mb-2">Actualiza el usuario con una nueva imagen facial para el entrenamiento.</p>
                     <pre className="bg-gray-100 p-2 rounded mb-4">
-                      {`const updatedUser = await sdk.updateUser('user123', { name: 'Nuevo Nombre' });`}
+                      {`const updatedUser = await sdk.updateUser('user123', faceImageBase64);`}
                     </pre>
                     <p>Parámetros:</p>
                     <ul className="list-disc pl-5 mb-2">
                       <li><code>userId</code>: String - ID del usuario</li>
-                      <li><code>userData</code>: Object - Datos del usuario a actualizar</li>
+                      <li><code>faceImage</code>: String (Base64) - Nueva imagen facial del usuario</li>
                     </ul>
                     <p>Retorna: Objeto con la información actualizada del usuario</p>
                   </>
@@ -186,7 +167,7 @@ async function handleCheckIn(faceImageBase64) {
                     <p>Retorna: Objeto con el resultado de la operación</p>
                   </>
                 )}
-                
+
                 <h2 className="text-xl font-semibold mb-2 mt-4">Manejo de errores</h2>
                 <p className="mb-4">
                   Todos los métodos del SDK lanzan excepciones en caso de error. Asegúrate de manejar estas excepciones en tu código.
@@ -194,7 +175,7 @@ async function handleCheckIn(faceImageBase64) {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="auth">
             <Card>
               <CardHeader>
