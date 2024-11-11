@@ -80,7 +80,7 @@ export default function Component() {
                   <>
                     <h2 id="installation" className="text-xl font-semibold mb-2">Instalación</h2>
                     <pre className="bg-gray-100 p-2 rounded mb-4">
-                      npm install facial-recognition-sdk
+                      npm install eagle-vision-sdk
                     </pre>
                   </>
                 )}
