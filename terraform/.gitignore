@@ -1,0 +1,32 @@
+# Archivos de estado de Terraform
+*.tfstate
+*.tfstate.*
+
+# Archivos de respaldo de estado de Terraform
+*.backup
+
+# Lock files de Terraform
+*.tf.lock.hcl
+*.terraform.lock.hcl
+
+# Archivos de plan de Terraform
+*.tfplan
+
+# Archivos de configuración de credenciales locales
+.terraformrc
+terraform.rc
+
+# Directorio donde Terraform descarga plugins y otros archivos de trabajo
+.terraform/
+
+# Archivos que puedan contener credenciales
+*.pem
+*.key
+
+# Otros archivos sensibles o temporales
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform/

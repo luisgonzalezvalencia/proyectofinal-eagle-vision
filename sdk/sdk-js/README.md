@@ -17,7 +17,7 @@ Este es un ejemplo básico de cómo utilizar el SDK en una aplicación Node.js:
 ```javascript
 import FacialRecognitionSDK from 'eagle-vision-sdk';
 
-const sdk = new FacialRecognitionSDK('TU_API_KEY');
+const sdk = new FacialRecognitionSDK('TU_API_KEY', 'API_URL_VERSION');
 
 // Ejemplo de check-in
 async function realizarCheckIn(faceImageBase64) {
