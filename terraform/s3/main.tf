@@ -1,6 +1,6 @@
 provider "aws" {
-  profile = "terraform-user" #perfil de AWS
-  region  = "us-east-1"  # región de AWS US East (N. Virginia)
+  profile = "terraform-user" # perfil de AWS
+  region  = "us-east-1"      # región de AWS US East (N. Virginia)
 }
 
 # Creación del bucket S3
@@ -16,6 +16,15 @@ resource "aws_s3_bucket" "eagle_vision_bucket" {
     Name        = "Eagle Vision SDK Bucket"
     Environment = "Production"
   }
+}
+
+# Configuración para permitir políticas públicas en el bucket
+resource "aws_s3_bucket_public_access_block" "eagle_vision_public_access_block" {
+  bucket                  = aws_s3_bucket.eagle_vision_bucket.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
 }
 
 # Configuración de versionado
