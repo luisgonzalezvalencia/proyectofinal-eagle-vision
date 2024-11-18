@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NgClass, NgIf } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [NgClass, NgIf, ReactiveFormsModule],
+  imports: [NgClass, NgIf, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -17,19 +18,36 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup = new FormGroup({
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required)
-  });;
+  });
 
+  errorMessage: string = '';
   loading = false;
   submitted = false;
 
 
-  constructor() { }
+  constructor(private authService: AuthenticationService) { }
+
   ngOnInit(): void {
     console.log(this.loginForm);
   }
 
   onSubmit() {
-    console.log('submit');
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+
+    this.loading = true;
+
+    this.authService.signIn(this.loginForm.value.username, this.loginForm.value.password).then((response) => {
+      this.router.navigate(['/home']);
+    }).catch((error) => {
+      console.log(error);
+      this.errorMessage = "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.";
+    }).finally(() => {
+      this.loading = false;
+    })
 
   }
 
