@@ -55,4 +55,16 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
+  loginWithGoogle() {
+    this.loading = true;
+    this.submitted = false;
+    this.authService.loginWithGoogle().then((response) => {
+      this.router.navigate(['/home']);
+    }).catch((error) => {
+      this.errorMessage = "Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.";
+    }).finally(() => {
+      this.loading = false;
+    });
+  }
+
 }
