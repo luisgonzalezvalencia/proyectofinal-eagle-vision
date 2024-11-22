@@ -136,3 +136,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AWS S3 settings
+AWS_ACCESS_KEY_ID = '<your_access_key_id>'
+AWS_SECRET_ACCESS_KEY = '<your_secret_access_key>'
+AWS_STORAGE_BUCKET_NAME = 'eagle-vision-sdk'
+AWS_S3_REGION_NAME = 'us-east-1'  # región
+AWS_QUERYSTRING_AUTH = False  # Esto evita URLs temporales firmadas
+
+# URL base para los archivos en S3
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# Configuración del almacenamiento de media
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

@@ -10,6 +10,7 @@ from neuralnetwork.dataprocess.dataprocess import readImages
 from neuralnetwork.dataprocess.implementation import retornar_presentes, runTest
 from PIL import Image
 from rest_framework.parsers import MultiPartParser, FormParser
+from neuralnetwork.serializers.url_image_serializer import UserImageSerializer
 
 # Create your views here.
 class NeuralNetworkViewSet(viewsets.ViewSet):
@@ -59,3 +60,14 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+            
+    
+    def upload_image_data(self, request, *args, **kwargs):
+        serializer = UserImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Image uploaded successfully',
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
