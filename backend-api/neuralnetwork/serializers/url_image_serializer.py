@@ -1,8 +1,6 @@
-
 from rest_framework import serializers
-from neuralnetwork.models import UserImage
 
-class UserImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserImage
-        fields = ['client_id', 'user_id', 'image']
+class UserImageSerializer(serializers.Serializer):
+    client_id = serializers.IntegerField()
+    user_id = serializers.CharField()
+    image = serializers.ImageField()
