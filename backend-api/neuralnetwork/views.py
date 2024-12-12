@@ -36,7 +36,7 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
 
     def post(self, request):
         try:
@@ -45,7 +45,7 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
             image = Image.open(file)
             if image.mode == 'RGBA':
                 image = image.convert('RGB')
-                
+
             testExecution = runTest(image)
             return HttpResponse(testExecution, content_type='image/png')
         except Exception as e:
@@ -53,7 +53,7 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
 
     def get_presentes_del_dia(self, request):
         try:
@@ -65,8 +65,8 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-            
-    
+
+
     def upload_image_data(self, request, *args, **kwargs):
         serializer = UserImageSerializer(data=request.data)
         if serializer.is_valid():
@@ -74,6 +74,7 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
             client_id = serializer.validated_data['client_id']
             user_id = serializer.validated_data['user_id']
             image = serializer.validated_data['image']
+
 
             # Conectar a S3
             s3 = boto3.client(
@@ -89,14 +90,16 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
             # Subir a S3
             try:
                 s3.upload_fileobj(image.file, os.environ['AWS_STORAGE_BUCKET_NAME'], s3_key)
+
+                # TODO: Agregar usersClient en firebase si no existe
                 return Response({"message": "Imagen subida correctamente", "s3_key": s3_key}, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    
+
+
+
     def upload_zip_client(self, request, *args, **kwargs):
         # Obtener el archivo ZIP
         client_id = request.data.get('client_id')
@@ -115,6 +118,9 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                     temp_file.write(chunk)
 
             # Ejecutar la subida en un hilo separado
+
+            # TODO: Generar background task y iniciar thread con ese id
+
             thread = threading.Thread(target=self.process_zip_upload, args=(client_id, zip_file_path))
             thread.start()
 
@@ -124,6 +130,7 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+    # TODO: Agregar task id para poder consultar el estado de la subida
     def process_zip_upload(self, client_id, zip_file_path):
         #TODO: Implementar la subida en segundo plano con un sistema de log para ir controlando el proceso
         s3 = boto3.client(
@@ -153,7 +160,11 @@ class NeuralNetworkViewSet(viewsets.ViewSet):
                         Body=file_data
                     )
 
+                    # TODO: Agregar usersClient en firebase si no existe
+
+
             print("Subida completada.")
+            # TODO: Actualizar background tasks
 
         except Exception as e:
             print(f"Error al procesar el archivo ZIP: {e}")
