@@ -26,6 +26,8 @@ from scipy.spatial.distance import cosine
 import zipfile
 import datetime
 
+from neuralnetwork.dataprocess.s3_helper import get_s3_client, download_file_from_s3, upload_file_to_s3
+
 def detectar_caras(
   imagen: Union[PIL.Image.Image, np.ndarray],
   detector: facenet_pytorch.models.mtcnn.MTCNN=None,
@@ -419,7 +421,52 @@ def crear_diccionario_referencia(folder_path:str,
         return dic_referencia
     else:
         return new_dic_referencia
-     
+
+def crear_diccionario_referencia_s3(bucket_name, folder_path_s3, **kwargs):
+    s3 = get_s3_client()
+    detector = kwargs.get('detector', None)
+    encoder = kwargs.get('encoder', None)
+
+    new_dic_referencia = {}
+
+    # Listar objetos en S3
+    s3_objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_path_s3)
+
+    for obj in s3_objects.get('Contents', []):
+        try:
+            s3_key = obj['Key']
+            if not s3_key.lower().endswith(('.jpg', '.jpeg', '.png', '.tif')):
+                continue  # Ignorar archivos no válidos
+
+            print(f"Procesando imagen S3: {s3_key}")
+            image_file = download_file_from_s3(bucket_name, s3_key)
+            if not image_file:
+                continue
+
+            imagen = Image.open(image_file)
+            bbox = detectar_caras(imagen, detector=detector, min_confidence=0.9)
+
+            if bbox is None or len(bbox) != 1:
+                continue  # Ignorar imágenes sin caras válidas
+
+            cara = extraer_caras(imagen, bbox)
+            embedding = calcular_embeddings(cara, encoder=encoder)
+            identidad = s3_key.split('/')[-2]  # Extraer nombre de la carpeta como identidad
+
+            if identidad not in new_dic_referencia:
+                new_dic_referencia[identidad] = []
+
+            new_dic_referencia[identidad].append(embedding)
+        except Exception as e:
+            print(f"Error al procesar la imagen: {s3_key}")
+            continue
+        
+    # Promediar los embeddings
+    for identidad, embeddings in new_dic_referencia.items():
+        new_dic_referencia[identidad] = np.mean(embeddings, axis=0)
+
+    return new_dic_referencia
+    
 def pipeline_deteccion_imagen(imagen: Union[PIL.Image.Image, np.ndarray],
   dic_referencia:dict,
   detector: facenet_pytorch.models.mtcnn.MTCNN=None,
@@ -549,7 +596,48 @@ def runTest(imageEvalued= None):
     print(f'Presentes: { identidades_presentes }')
     return boxes
 
+def runTestS3(imageEvalued=None, client_id=None):
+    bucket_name = os.environ['AWS_STORAGE_BUCKET_NAME']
+    s3_folder_images = f'{client_id}/'
+    s3_diccionario_path = f'{client_id}/diccionarios/'
 
+    nombre_diccionario = generar_nombre_archivo()
+
+    # Descargar o crear diccionario
+    dic_referencia = None
+    try:
+        dic_file = download_file_from_s3(bucket_name, f'{s3_diccionario_path}{nombre_diccionario}')
+        if dic_file:
+            dic_referencia = pickle.load(dic_file)
+            print("Diccionario cargado desde S3.")
+    except Exception:
+        pass
+
+    if dic_referencia is None:
+        print("Creando diccionario de referencia...")
+        dic_referencia = crear_diccionario_referencia_s3(bucket_name, s3_folder_images)
+        # Subir diccionario a S3
+        with io.BytesIO() as buffer:
+            pickle.dump(dic_referencia, buffer)
+            buffer.seek(0)
+            upload_file_to_s3(bucket_name, f'{s3_diccionario_path}{nombre_diccionario}', buffer.getvalue())
+
+    # Evaluar imagen
+    if imageEvalued is None:
+        image_file = download_file_from_s3(bucket_name, 'assets/images/grupoGrande.PNG')
+        imageEvalued = Image.open(image_file)
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    boxes, identidades = pipeline_deteccion_imagen(
+        imagen=imageEvalued,
+        dic_referencia=dic_referencia,
+        min_confidence=0.95,
+        device=torch.device('cuda:0' if torch.cuda.is_available() else 'cpu'),
+        ax=ax
+    )
+
+    print(f"Identidades detectadas: {identidades}")
+    return boxes
 
 def generar_nombre_archivo(nombre= "diccionario"):
     fecha_actual = datetime.date.today()
