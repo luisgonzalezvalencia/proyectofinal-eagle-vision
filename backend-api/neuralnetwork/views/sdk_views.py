@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
 
-from neuralnetwork.dataprocess.implementation import retornar_presentes, runTest, runTestS3
+from neuralnetwork.dataprocess.implementation import retornar_presentes, runTest, check_in_data_client
 from PIL import Image
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -38,8 +38,8 @@ class SdkViewSet(viewsets.ViewSet):
             if image.mode == 'RGBA':
                 image = image.convert('RGB')
 
-            testExecution = runTestS3(image, client_id)
-            return HttpResponse(testExecution, content_type='image/png')
+            check_in = check_in_data_client(image, client_id)
+            return HttpResponse(check_in, content_type='image/png')
         except Exception as e:
             return Response(
                 {"error": str(e)},

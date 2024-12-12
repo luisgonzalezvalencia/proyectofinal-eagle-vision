@@ -596,7 +596,7 @@ def runTest(imageEvalued= None):
     print(f'Presentes: { identidades_presentes }')
     return boxes
 
-def runTestS3(imageEvalued=None, client_id=None):
+def check_in_data_client(imageEvalued=None, client_id=None):
     bucket_name = os.environ['AWS_STORAGE_BUCKET_NAME']
     s3_folder_images = f'{client_id}/'
     s3_diccionario_path = f'{client_id}/diccionarios/'
@@ -637,6 +637,10 @@ def runTestS3(imageEvalued=None, client_id=None):
     )
 
     print(f"Identidades detectadas: {identidades}")
+    identidades_presentes = [identidad for identidad in identidades if identidad is not None]
+    
+    # guardar_presentes(identidades_presentes) TODO: guardar en firebase o s3
+    
     return boxes
 
 def generar_nombre_archivo(nombre= "diccionario"):
