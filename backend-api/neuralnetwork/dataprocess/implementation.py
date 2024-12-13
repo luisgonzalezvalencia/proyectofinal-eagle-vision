@@ -641,7 +641,7 @@ def check_in_data_client(imageEvalued=None, client_id=None):
     
     # guardar_presentes(identidades_presentes) TODO: guardar en firebase o s3
     
-    return boxes
+    return boxes, identidades_presentes
 
 def generar_nombre_archivo(nombre= "diccionario"):
     fecha_actual = datetime.date.today()

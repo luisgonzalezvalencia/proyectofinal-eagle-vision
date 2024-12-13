@@ -38,8 +38,8 @@ class SdkViewSet(viewsets.ViewSet):
             if image.mode == 'RGBA':
                 image = image.convert('RGB')
 
-            check_in = check_in_data_client(image, client_id)
-            return HttpResponse(check_in, content_type='image/png')
+            check_in_bounding_box, identidades = check_in_data_client(image, client_id)
+            return HttpResponse(identidades, content_type='application/json')
         except Exception as e:
             return Response(
                 {"error": str(e)},
