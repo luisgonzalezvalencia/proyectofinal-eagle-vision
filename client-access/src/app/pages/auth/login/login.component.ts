@@ -30,16 +30,14 @@ export class LoginComponent implements OnInit {
 
   constructor(private authService: AuthenticationService) {}
 
-  ngOnInit(): void {
-    console.log(this.loginForm);
-  }
+  ngOnInit(): void {}
 
   onSubmit() {
-    this.submitted = true;
     if (this.loginForm.invalid) {
       return;
     }
 
+    this.submitted = true;
     this.loading = true;
 
     this.authService

@@ -1,35 +1,47 @@
-import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { NgClass, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthenticationService } from '../../../services/authentication.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [NgIf, ReactiveFormsModule, RouterLink],
+  imports: [NgClass, NgIf, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  public formReg: FormGroup;
-  public loading: boolean = false;
-  public errorMessage: string = '';
+  router = inject(Router);
 
-  constructor(
-    private authService: AuthenticationService,
-    private router: Router
-  ) {
-    this.formReg = new FormGroup({
-      email: new FormControl(''),
-      password: new FormControl(''),
-    });
+  registerForm: FormGroup = new FormGroup({
+    username: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
+  });
+
+  errorMessage: string = '';
+  loading = false;
+  submitted = false;
+
+  get f() {
+    return this.registerForm.controls;
   }
 
+  constructor(private authService: AuthenticationService) {}
+
   onSubmit() {
+    if (this.registerForm.invalid) {
+      return;
+    }
+    this.submitted = true;
     this.loading = true;
     this.authService
-      .register(this.formReg.value.email, this.formReg.value.password)
+      .register(this.registerForm.value.email, this.registerForm.value.password)
       .then((response) => {
         this.router.navigate(['/login']);
       })
