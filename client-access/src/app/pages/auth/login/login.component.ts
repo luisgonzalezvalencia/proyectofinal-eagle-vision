@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
     this.authService
       .loginWithGoogle()
       .then((response) => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/admin/home']);
       })
       .catch((error) => {
         this.errorMessage =
