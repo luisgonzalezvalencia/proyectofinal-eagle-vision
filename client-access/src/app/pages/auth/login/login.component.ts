@@ -7,7 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { catchError, from, of, switchMap } from 'rxjs';
+import { AuthService } from '../../../services/auth.service';
+import { ClientService } from '../../../services/client.service';
 
 @Component({
   selector: 'app-login',
@@ -28,11 +30,18 @@ export class LoginComponent implements OnInit {
   loading = false;
   submitted = false;
 
-  constructor(private authService: AuthenticationService) {}
+  get f() {
+    return this.loginForm.controls;
+  }
+
+  constructor(
+    private authService: AuthService,
+    private clientService: ClientService
+  ) {}
 
   ngOnInit(): void {}
 
-  onSubmit() {
+  signIn() {
     if (this.loginForm.invalid) {
       return;
     }
@@ -40,39 +49,70 @@ export class LoginComponent implements OnInit {
     this.submitted = true;
     this.loading = true;
 
-    this.authService
-      .signIn(this.loginForm.value.username, this.loginForm.value.password)
-      .then((response) => {
-        this.router.navigate(['/home']);
-      })
-      .catch((error) => {
-        console.log(error);
-        this.errorMessage =
-          'Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.';
-      })
-      .finally(() => {
+    from(
+      this.authService.signIn(
+        this.loginForm.value.username,
+        this.loginForm.value.password
+      )
+    )
+      .pipe(
+        switchMap((user) => {
+          console.log('Usuario autenticado con Google:', user);
+          if (user?.uid) {
+            return this.clientService.get(user.uid);
+          }
+          return of(null);
+        }),
+        catchError((error) => {
+          console.error('Error al iniciar sesión con Google:', error);
+          this.errorMessage =
+            'Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.';
+          return of(null);
+        })
+      )
+      .subscribe((client) => {
         this.loading = false;
+
+        if (client) {
+          console.log('Cliente obtenido con Google:', client);
+          this.router.navigate(['/admin/home']);
+        } else {
+          this.errorMessage =
+            'No se pudo encontrar un cliente asociado al usuario.';
+        }
       });
   }
 
-  get f() {
-    return this.loginForm.controls;
-  }
-
-  loginWithGoogle() {
+  signInWithGoogle() {
+    this.submitted = true;
     this.loading = true;
-    this.submitted = false;
-    this.authService
-      .loginWithGoogle()
-      .then((response) => {
-        this.router.navigate(['/admin/home']);
-      })
-      .catch((error) => {
-        this.errorMessage =
-          'Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.';
-      })
-      .finally(() => {
+
+    from(this.authService.signInWithGoogle())
+      .pipe(
+        switchMap((user) => {
+          console.log('Usuario autenticado con Google:', user);
+          if (user?.uid) {
+            return this.clientService.get(user.uid);
+          }
+          return of(null);
+        }),
+        catchError((error) => {
+          console.error('Error al iniciar sesión con Google:', error);
+          this.errorMessage =
+            'Error al intentar iniciar sesión. Por favor, inténtalo de nuevo.';
+          return of(null);
+        })
+      )
+      .subscribe((client) => {
         this.loading = false;
+
+        if (client) {
+          console.log('Cliente obtenido con Google:', client);
+          this.router.navigate(['/admin/home']);
+        } else {
+          this.errorMessage =
+            'No se pudo encontrar un cliente asociado al usuario.';
+        }
       });
   }
 }

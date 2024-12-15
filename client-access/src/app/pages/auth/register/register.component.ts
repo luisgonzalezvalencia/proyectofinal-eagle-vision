@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthenticationService } from '../../../services/authentication.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -32,7 +32,7 @@ export class RegisterComponent {
     return this.registerForm.controls;
   }
 
-  constructor(private authService: AuthenticationService) {}
+  constructor(private authService: AuthService) {}
 
   onSubmit() {
     if (this.registerForm.invalid) {

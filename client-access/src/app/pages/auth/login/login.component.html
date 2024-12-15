@@ -4,13 +4,13 @@
     <div class="text-center">
         <h4>Iniciar Sesion</h4>
     </div>
-    <button class="btn btn-secondary w-100" [disabled]="loading" (click)="loginWithGoogle()" type="button">
-        <i class="bi bi-google"></i>
-        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+    <button class="btn btn-secondary w-100" [disabled]="loading" (click)="signInWithGoogle()" type="button">
+        <i *ngIf="!loading" class="bi bi-google"></i>
+        <i *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></i>
         Iniciar con Google
     </button>
     <hr />
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm" (ngSubmit)="signIn()">
         <div class="form-group">
             <label for="username">Email</label>
             <input type="text" formControlName="username" class="form-control"
@@ -34,7 +34,7 @@
         <div class="form-group pt-3">
             <div class="d-grid gap-2">
                 <button [disabled]="loading" class="btn btn-primary">
-                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    <i *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></i>
                     Iniciar Sesion
                 </button>
 

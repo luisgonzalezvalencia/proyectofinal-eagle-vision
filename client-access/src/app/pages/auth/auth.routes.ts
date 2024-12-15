@@ -11,4 +11,11 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () =>
       import('./register/register.component').then((m) => m.RegisterComponent),
   },
+  {
+    path: 'subscribe',
+    loadComponent: () =>
+      import('./subscribe/subscribe.component').then(
+        (m) => m.SubscribeComponent
+      ),
+  },
 ];
