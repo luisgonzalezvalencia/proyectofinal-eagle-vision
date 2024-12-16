@@ -1,5 +1,5 @@
 export interface Client {
-  id?: string;
+  id: string;
   clientId?: number;
   expirationDate?: string;
   token?: string;
