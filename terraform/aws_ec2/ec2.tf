@@ -90,7 +90,7 @@ resource "aws_instance" "django_backend" {
   provisioner "remote-exec" {
   inline = [
     "sudo apt-get update -y",
-    "sudo apt-get install -y gcc libssl-dev libbz2-dev libffi-dev zlib1g-dev make wget build-essential python3-venv python3-pip",
+    "sudo apt-get install -y gcc libssl-dev libbz2-dev libffi-dev zlib1g-dev liblzma-dev make wget build-essential python3-venv python3-pip",
 
     # Descarga y compila Python 3.11
     "cd /usr/src",
