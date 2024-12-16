@@ -1,6 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ClientService } from '../../../services/client.service';
 
@@ -19,7 +18,6 @@ export class HomeComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router,
     private clientService: ClientService
   ) {}
 
@@ -50,16 +48,5 @@ export class HomeComponent {
 
   toggleViewToken() {
     this.isHashed = !this.isHashed;
-  }
-
-  logout() {
-    this.authService
-      .signOut()
-      .then(() => {
-        this.router.navigate(['/login']);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 }
