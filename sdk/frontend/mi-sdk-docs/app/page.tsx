@@ -52,7 +52,7 @@ export default function LandingPage() {
             {solutions.map((solution, index) => (
               <Card key={index}>
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle>
                     <CheckCircle2 className="mr-2 text-green-500" />
                     {solution.title}
                   </CardTitle>
@@ -68,7 +68,7 @@ export default function LandingPage() {
         <section className="text-center">
           <h2 className="text-3xl font-bold mb-4">¿Listo para revolucionar tu sistema de identificación?</h2>
           <p className="text-xl text-gray-600 mb-8">Contáctanos hoy para obtener más información sobre Eagle Vision</p>
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700">Contactar Ahora</Button>
+          <Button className="bg-blue-600 hover:bg-blue-700">Contactar Ahora</Button>
         </section>
       </main>
 
