@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { isPast, parseISO } from 'date-fns';
 import { AuthService } from './services/auth.service';
-import { ClientService } from './services/client.service';
 
 @Component({
   selector: 'app-root',
@@ -13,20 +13,27 @@ import { ClientService } from './services/client.service';
 })
 export class AppComponent implements OnInit {
   title = 'facedetection';
+  isInitialized = false;
 
-  constructor(
-    private authService: AuthService,
-    private clientService: ClientService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe((user) => {
-      if (user) {
-        this.clientService.get(user.uid).subscribe((client) => {
-          console.log('AppComponent client:', client, user);
-          if (!client) {
-            this.router.navigate(['/auth/subscribe']);
+    this.authService.isInitialized$.subscribe((initialized) => {
+      this.isInitialized = initialized;
+
+      if (initialized) {
+        // Una vez inicializado, maneja el flujo del usuario
+        this.authService.currentUser$.subscribe((user) => {
+          if (!user) {
+            this.router.navigate(['/auth/login']);
+          } else {
+            this.authService.currentClient$.subscribe((client) => {
+              if (!client || !client.expirationDate) {
+                this.router.navigate(['/auth/subscribe']);
+              } else if (isPast(parseISO(client.expirationDate))) {
+                this.router.navigate(['/auth/payment']);
+              }
+            });
           }
         });
       }

@@ -2,6 +2,7 @@ export interface Client {
   id?: string;
   clientId?: number;
   expirationDate?: string;
+  token?: string;
   userId: string;
 }
 

@@ -1,1 +1,7 @@
+<div *ngIf="!isInitialized"
+  class="vw-100 vh-100 d-flex justify-content-center align-items-center position-fixed top-0 start-0 bg-white z-3">
+  <div class="spinner-grow text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
 <router-outlet />

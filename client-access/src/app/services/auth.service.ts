@@ -8,26 +8,53 @@ import {
   User,
 } from '@angular/fire/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Client } from '../models';
+import { ClientService } from './client.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private isInitializedSubject = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private currentClientSubject = new BehaviorSubject<Client | null>(null);
 
-  constructor(private auth: Auth) {
+  constructor(private auth: Auth, private clientService: ClientService) {
     this.auth.onAuthStateChanged((user) => {
-      console.log('[onAuthStateChanged]', user);
       this.currentUserSubject.next(user);
+
+      if (user) {
+        this.clientService.get(user.uid).subscribe((client) => {
+          this.currentClientSubject.next(client);
+          this.isInitializedSubject.next(true);
+        });
+      } else {
+        this.currentClientSubject.next(null);
+        this.isInitializedSubject.next(true);
+      }
     });
   }
 
-  // Observable to get the authenticated user
   get currentUser$(): Observable<User | null> {
     return this.currentUserSubject.asObservable();
   }
 
-  // Get current user UID
+  get currentClient$(): Observable<Client | null> {
+    return this.currentClientSubject.asObservable();
+  }
+
+  get isInitialized$(): Observable<boolean> {
+    return this.isInitializedSubject.asObservable();
+  }
+
+  get currentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  get currentClient(): Client | null {
+    return this.currentClientSubject.value;
+  }
+
   get userId(): string | null {
     return this.currentUserSubject.value?.uid || null;
   }
