@@ -15,6 +15,7 @@ import { ClientService } from '../../../services/client.service';
 export class HomeComponent {
   client$ = this.authService.currentClient$;
   isHashed = true;
+  copySuccess = '';
 
   constructor(
     private authService: AuthService,
@@ -29,6 +30,22 @@ export class HomeComponent {
     this.clientService
       .generateToken(this.authService.currentClient.id)
       .subscribe();
+  }
+
+  copyToken(): void {
+    if (!this.authService.currentClient?.token) {
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(this.authService.currentClient.token)
+      .then(() => {
+        this.copySuccess = '¡Copiado!';
+        setTimeout(() => (this.copySuccess = ''), 2000);
+      })
+      .catch((err) => {
+        console.error('Error al copiar al portapapeles:', err);
+      });
   }
 
   toggleViewToken() {

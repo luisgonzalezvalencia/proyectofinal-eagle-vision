@@ -8,13 +8,16 @@
                         <h5 class="card-title">SDK Token</h5>
                         <h6 class="card-subtitle mb-2 text-body-secondary"></h6>
                         <p class="card-text">Genera tu token aqui para utilizar el SDK</p>
+                        <div class="alert alert-success" role="alert" *ngIf="copySuccess">
+                            {{copySuccess}}
+                        </div>
                         <div class="input-group" *ngIf="client.token">
                             <input type="text" class="form-control" placeholder="SDK Token" disabled
                                 [type]="isHashed ? 'password' : 'text'" [value]="client.token">
                             <button class="btn btn-outline-secondary" type="button" (click)="toggleViewToken()">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button class="btn btn-outline-secondary" type="button">
+                            <button class="btn btn-outline-secondary" type="button" (click)="copyToken()">
                                 <i class="bi bi-copy"></i>
                             </button>
                         </div>
