@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BulkUploadComponent } from '../../../components/bulk-upload/bulk-upload.component';
+import { SingleUploadComponent } from '../../../components/single-upload/single-upload.component';
 import { TokenGeneratorComponent } from '../../../components/token-generator/token-generator.component';
 
 @Component({
@@ -7,7 +8,11 @@ import { TokenGeneratorComponent } from '../../../components/token-generator/tok
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [TokenGeneratorComponent, BulkUploadComponent],
+  imports: [
+    TokenGeneratorComponent,
+    BulkUploadComponent,
+    SingleUploadComponent,
+  ],
   providers: [],
 })
 export class HomeComponent {
