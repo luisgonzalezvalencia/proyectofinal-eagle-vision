@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ERROR_MESSAGES } from './error-messages.es';
+import { HttpRequestService } from './http-request.service';
 
 export interface UploadZipResponse {
   message?: string
@@ -12,14 +13,15 @@ export interface UploadZipResponse {
 @Injectable({ providedIn: 'root' })
 export class CheckService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpRequestService: HttpRequestService) { }
 
-  postData(formData: FormData): Observable<Blob> {
-    return this.http.post('http://127.0.0.1:8000/check', formData, { responseType: 'blob' });
+
+  check(formData: FormData): Observable<Blob> {
+    return this.httpRequestService.postData('check', formData, 'blob');
   }
 
   getListadoAlumnos(): Observable<object> {
-    return this.http.get('http://127.0.0.1:8000/get_presentes_del_dia', { responseType: 'json' });
+    return this.httpRequestService.getData('get_presentes_del_dia', 'json');
   }
 
   getErrorMessage(error: any): string {
@@ -29,7 +31,8 @@ export class CheckService {
   }
 
   uploadZip(formData: FormData): Observable<UploadZipResponse> {
-    return this.http.post('http://127.0.0.1:8000/upload-zip', formData, { responseType: 'json' });
+    return this.httpRequestService.postData('upload-zip', formData, 'json');
   }
+
 
 }
