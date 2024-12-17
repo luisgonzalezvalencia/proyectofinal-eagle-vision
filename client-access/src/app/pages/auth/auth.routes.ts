@@ -18,4 +18,9 @@ export const AUTH_ROUTES: Routes = [
         (m) => m.SubscribeComponent
       ),
   },
+  {
+    path: 'payment',
+    loadComponent: () =>
+      import('./payment/payment.component').then((m) => m.PaymentComponent),
+  },
 ];
