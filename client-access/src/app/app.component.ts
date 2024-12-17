@@ -28,10 +28,13 @@ export class AppComponent implements OnInit {
             this.router.navigate(['/auth/login']);
           } else {
             this.authService.currentClient$.subscribe((client) => {
+              console.log('client', client);
               if (!client || !client.expirationDate) {
                 this.router.navigate(['/auth/subscribe']);
               } else if (isPast(parseISO(client.expirationDate))) {
                 this.router.navigate(['/auth/payment']);
+              } else {
+                this.router.navigate(['/admin/home']);
               }
             });
           }

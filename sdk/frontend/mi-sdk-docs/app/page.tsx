@@ -24,7 +24,9 @@ export default function LandingPage() {
         <section className="mb-16 text-center">
           <h2 className="text-4xl font-bold mb-4">Transformando la Identificación y Validación de Usuarios</h2>
           <p className="text-xl text-gray-600 mb-8">Solución de reconocimiento facial de alta precisión para organizaciones</p>
-          <Button className="bg-blue-600 hover:bg-blue-700">Solicitar Demostración</Button>
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <a href="https://proyectofinal-eagle-vision-ia.vercel.app" target="_self">Solicitar Demostración</a>
+          </Button>
         </section>
 
         <section className="grid md:grid-cols-2 gap-8 mb-16">

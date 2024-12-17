@@ -48,3 +48,5 @@ Thumbs.db
 *-debug.log
 .runtimeconfig.json
 
+backend-api/github-action
+backend-api/github-action.pub
