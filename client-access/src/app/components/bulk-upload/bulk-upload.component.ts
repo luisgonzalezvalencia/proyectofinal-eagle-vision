@@ -4,13 +4,14 @@ import { delay, of, switchMap } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { CheckService } from '../../services/check.service';
 import { HttpClientModule } from '@angular/common/http';
+import { HttpRequestService } from '../../services/http-request.service';
 
 @Component({
   selector: 'app-bulk-upload',
   standalone: true,
   templateUrl: './bulk-upload.component.html',
   imports: [NgIf, HttpClientModule],
-  providers: [CheckService],
+  providers: [CheckService, HttpRequestService],
 })
 export class BulkUploadComponent {
   fileName: string = '';
