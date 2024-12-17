@@ -1,0 +1,27 @@
+<ng-container *ngIf="client$ | async as client">
+    <div class="card h-100">
+        <div class="card-body">
+            <h5 class="card-title text-center">SDK Token</h5>
+            <p class="card-text text-center">Genera tu token aqui para utilizar el SDK</p>
+            <div class="alert alert-success" role="alert" *ngIf="copySuccess">
+                {{copySuccess}}
+            </div>
+            <div class="input-group" *ngIf="client.token">
+                <input type="text" class="form-control" placeholder="SDK Token" disabled
+                    [type]="isHashed ? 'password' : 'text'" [value]="client.token">
+                <button class="btn btn-outline-secondary" type="button" (click)="toggleViewToken()">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-outline-secondary" type="button" (click)="copyToken()">
+                    <i class="bi bi-copy"></i>
+                </button>
+            </div>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-primary mx-auto" type="button" (click)="generateToken()">Generar
+                    Token</button>
+            </div>
+        </div>
+
+    </div>
+</ng-container>
