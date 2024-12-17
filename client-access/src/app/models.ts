@@ -6,7 +6,8 @@ export interface Client {
   userId: string;
 }
 
-export interface UsersClient {
+export interface UserClient {
+  id: string;
   userId: string;
   clientId: number;
 }

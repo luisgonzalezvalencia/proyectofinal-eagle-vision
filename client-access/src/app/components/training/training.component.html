@@ -1,0 +1,14 @@
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title text-center">Inicia el entrenamiento de Eagle Vision</h5>
+        <p class="card-text text-center">Con los usuarios ya almacenados, inicia el entrenamiento inteligente para
+            reconocer a tus usuarios</p>
+
+        <button class="btn btn-primary w-100 btn-lg btn-success" [disabled]="!canTrain" type="button"
+            (click)="startTraining()">
+            <i class="bi bi-robot"></i>
+            Iniciar Entrenamiento
+        </button>
+    </div>
+
+</div>
