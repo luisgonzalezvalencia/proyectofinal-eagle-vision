@@ -4,6 +4,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ERROR_MESSAGES } from './error-messages.es';
 
+export interface UploadZipResponse {
+  message?: string
+  error?: string
+}
+
 @Injectable({ providedIn: 'root' })
 export class CheckService {
 
@@ -22,4 +27,9 @@ export class CheckService {
     const errorMessage = ERROR_MESSAGES[errorKey as keyof typeof ERROR_MESSAGES];
     return errorMessage.replace('{{requiredLength}}', error[errorKey].requiredLength);
   }
+
+  uploadZip(formData: FormData): Observable<UploadZipResponse> {
+    return this.http.post('http://127.0.0.1:8000/upload-zip', formData, { responseType: 'json' });
+  }
+
 }
