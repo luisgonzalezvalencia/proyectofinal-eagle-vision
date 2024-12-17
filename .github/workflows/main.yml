@@ -19,7 +19,7 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "./"  # Copia todo el código desde GitHub
+        source: "./backend-api/"  # Copia todo el código desde GitHub
         target: "/home/ubuntu/facedetection"
 
     - name: Install dependencies and restart services
