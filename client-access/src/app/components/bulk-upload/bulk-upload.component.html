@@ -1,13 +1,14 @@
 <div class="card h-100">
     <div class="card-body">
         <h5 class="card-title text-center">Carga Masiva de Usuarios</h5>
-
-        <p class="card-text text-center">Podes cargar multiples usuarios subiendo un archivo .zip</p>
+        <p class="card-text text-center">
+            Sube un archivo <strong>ZIP</strong> con múltiples imágenes de usuarios.
+        </p>
 
         <div class="text-center mt-3">
-            <button class="btn btn-primary" (click)="fileInput.click()" [disabled]="uploading">
+            <button class="btn btn-outline-primary" (click)="fileInput.click()" [disabled]="uploading">
                 <i *ngIf="uploading" class="spinner-border spinner-border-sm mr-1"></i>
-                Subir Archivo
+                <i *ngIf="!uploading" class="bi bi-cloud-upload"></i> Subir Archivo ZIP
             </button>
             <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept=".zip" />
         </div>

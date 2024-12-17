@@ -1,12 +1,12 @@
 <div class="card h-100">
     <div class="card-body">
-        <h5 class="card-title text-center">Carga Individual de Usuarios</h5>
-
-        <p class="card-text text-center">Podes cargar un usuario subiendo una imagen en formato .jpeg, jpg o .png</p>
+        <h5 class="card-title text-center">Carga de Usuario Individual</h5>
+        <p class="card-text text-center">
+            Sube una imagen del usuario en formato <strong>JPEG</strong> o <strong>PNG</strong>.
+        </p>
 
         <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
 
-            <!-- Input para User ID -->
             <div class="form-group ">
                 <label for="userId" class="mb-2">ID de Usuario</label>
                 <input type="text" id="userId" class="form-control" formControlName="userId"
@@ -17,27 +17,22 @@
                 </div>
             </div>
 
-            <!-- Botón para subir archivo -->
-            <div class="form-group mt-3">
-                <button class="btn btn-primary" (click)="fileInput.click()" type="button" [disabled]="uploading">
+            <div class="form-group mt-3 text-center">
+                <button class="btn btn-outline-primary" (click)="fileInput.click()" type="button"
+                    [disabled]="uploading">
                     <i *ngIf="uploading" class="spinner-border spinner-border-sm mr-1"></i>
+                    <i *ngIf="!uploading" class="bi bi-upload"></i>
                     {{fileName? fileName : 'Seleccionar Archivo'}}
                 </button>
                 <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
                     accept=".jpg,.jpeg,.png" />
             </div>
 
-            <!-- Botón para enviar el formulario -->
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-success" [disabled]="!file || uploading || uploadForm.invalid">
                     <i *ngIf="uploading" class="spinner-border spinner-border-sm mr-1"></i>
-                    Enviar
+                    Subir Archivo
                 </button>
-            </div>
-
-            <!-- Mensaje de éxito -->
-            <div *ngIf="uploadMessage" class="alert alert-success mt-3">
-                {{ uploadMessage }}
             </div>
         </form>
 
