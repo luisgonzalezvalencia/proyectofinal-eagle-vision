@@ -87,6 +87,18 @@ resource "aws_instance" "django_backend" {
     }
   }
 
+  provisioner "file" {
+    source      = "../../backend-api/.env"
+    destination = "/home/ubuntu/facedetection/.env"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("mi-clave-aws.pem")
+      host        = self.public_ip
+    }
+  }
+
   provisioner "remote-exec" {
   inline = [
     "sudo apt-get update -y",
@@ -99,6 +111,8 @@ resource "aws_instance" "django_backend" {
     "cd Python-3.11.0",
     "sudo ./configure --enable-optimizations",
     "sudo make altinstall",
+    "sudo apt install -y nginx",
+
 
     # Crea y activa el virtualenv
     "sudo apt install python3-virtualenv -y",
@@ -111,12 +125,12 @@ resource "aws_instance" "django_backend" {
     # Ejecuta el servidor con Gunicorn
     "cd /home/ubuntu/facedetection",
     "pip install gunicorn",
-    "nohup gunicorn --chdir /home/ubuntu/facedetection --bind 0.0.0.0:8000 main.wsgi:application &"
+    # "nohup gunicorn --chdir /home/ubuntu/facedetection --bind 0.0.0.0:8000 main.wsgi:application &" # correr esto manualmente luego de configurar nginx
   ]
 
   connection {
     type        = "ssh"
-    user        = "ubuntu" # O "ubuntu" si usas Ubuntu
+    user        = "ubuntu"
     private_key = file("mi-clave-aws.pem")
     host        = self.public_ip
   }
