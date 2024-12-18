@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { delay, of, switchMap, take } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-single-upload',
@@ -23,9 +24,11 @@ export class SingleUploadComponent {
   file: File | null = null;
   fileName: string = '';
   uploading: boolean = false;
-  uploadMessage: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private toastService: ToastService
+  ) {}
 
   // Evento que se dispara al seleccionar un archivo
   onFileSelected(event: Event): void {
@@ -36,7 +39,9 @@ export class SingleUploadComponent {
 
       // Validar el tipo de archivo
       if (!selectedFile.name.match(/\.(jpg|jpeg|png)$/)) {
-        alert('Solo se permiten archivos en formato .jpg, .jpeg o .png');
+        this.toastService.error(
+          'Solo se permiten archivos en formato .jpg, .jpeg o .png'
+        );
         return;
       }
 
@@ -69,16 +74,16 @@ export class SingleUploadComponent {
       )
       .subscribe({
         next: (response) => {
-          console.log('Respuesta del servidor:', response);
-          this.uploadMessage = 'Archivo subido correctamente.';
+          this.toastService.success(
+            response.message ?? 'Archivo subido correctamente'
+          );
           this.resetForm();
         },
         error: (error) => {
+          this.toastService.error('Error al subir el archivo.');
           console.error('Error al subir el archivo:', error);
-          alert('Error al subir el archivo. Intente nuevamente.');
         },
         complete: () => {
-          console.log('complete');
           this.uploading = false;
         },
       });

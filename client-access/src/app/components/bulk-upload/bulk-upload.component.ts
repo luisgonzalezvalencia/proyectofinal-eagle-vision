@@ -1,10 +1,11 @@
 import { NgIf } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { delay, of, switchMap } from 'rxjs';
+import { switchMap, take } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { CheckService } from '../../services/check.service';
-import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService } from '../../services/http-request.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -16,11 +17,12 @@ import { HttpRequestService } from '../../services/http-request.service';
 export class BulkUploadComponent {
   fileName: string = '';
   uploading: boolean = false;
-  uploadMessage: string = '';
 
-  constructor(private authService: AuthService,
-    private checkService: CheckService
-  ) { }
+  constructor(
+    private authService: AuthService,
+    private checkService: CheckService,
+    private toastService: ToastService
+  ) {}
 
   // Evento que se dispara al seleccionar un archivo
   onFileSelected(event: Event): void {
@@ -30,7 +32,7 @@ export class BulkUploadComponent {
       const file = input.files[0];
 
       if (!file.name.endsWith('.zip')) {
-        alert('Solo se permiten archivos .zip');
+        this.toastService.error('Solo se permiten archivos .zip');
         return;
       }
 
@@ -43,27 +45,35 @@ export class BulkUploadComponent {
 
   // Envía el archivo al servidor
   uploadFile(file: File): void {
+    this.uploading = true;
     this.authService.currentClient$
       .pipe(
+        take(1),
         switchMap((client) => {
           const formData = new FormData();
           formData.append('zip_file', file);
           formData.append('client_id', client?.clientId?.toString() ?? '');
 
           return this.checkService.uploadZip(formData);
-        }),
-        // delay(2000)
+        })
       )
       .subscribe({
         next: (response) => {
-          console.log('Respuesta del servidor:', response);
-          this.uploadMessage = response.message ?? response.error ?? '';
-          this.uploading = false;
+          if (!response.error) {
+            this.toastService.success(
+              response.message ?? 'Archivo subido correctamente'
+            );
+          } else {
+            this.toastService.error(response.error);
+          }
+
           this.fileName = '';
         },
         error: (err) => {
-          console.error('Error al subir el archivo:', err);
-          alert('Error al subir el archivo. Inténtalo de nuevo.');
+          this.toastService.error('Error al subir el archivo.');
+        },
+        complete: () => {
+          this.uploading = false;
         },
       });
   }
