@@ -21,8 +21,9 @@ jobs:
           host: ${{ vars.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./backend-api/"  # Copia todo el código desde GitHub
+          source: "./backend-api/*"
           target: "/home/ubuntu/facedetection"
+          rm: true  # Elimina los archivos existentes en el destino
 
       - name: Install dependencies and restart services
         uses: appleboy/ssh-action@master
