@@ -14,21 +14,32 @@ db = firestore.client()
 
 def add_user_client(client_id, id_user, s3_key):
     try:
-        # Crear referencia a la subcolección de imágenes
-        user_doc_ref = db.collection("usersClient").document(client_id).collection("users").document(id_user)
-        images_ref = user_doc_ref.collection("images")
+        # Referencia a la colección usersClient y documento de usuario
+        user_doc_ref = db.collection("usersClient").document(id_user)
 
-        # Generar un nombre único para la imagen
-        image_doc_id = client_id + "_" + id_user + "_" + s3_key.split('/')[-1].replace('.', '_')
+        # Crear o actualizar el documento del usuario
+        user_doc_ref.set({
+            "userId": id_user,
+            "clientId": client_id,
+            "createdAt": datetime.utcnow().isoformat()
+        }, merge=True)
 
-        # Agregar el documento de imagen en Firestore
+        # Referencia a la colección images
+        images_ref = db.collection("images")
+
+        # Generar un nombre único para el documento de la imagen
+        image_doc_id = f"{id_user}_{s3_key.split('/')[-1].replace('.', '_')}"
+
+        # Agregar el documento de imagen a la colección images
         images_ref.document(image_doc_id).set({
-            "file_name": s3_key.split('/')[-1],
-            "s3_path": s3_key,
-            "uploaded_at": datetime.utcnow().isoformat(),
+            "clientId": client_id,
+            "userId": id_user,
+            "fileName": s3_key.split('/')[-1],
+            "s3Path": s3_key,
+            "uploadedAt": datetime.utcnow().isoformat(),
         })
 
-        print(f"Imagen registrada en Firestore para client_id: {client_id}, id_user: {id_user}")
+        print(f"Usuario {id_user} y su imagen {image_doc_id} registrados en Firestore correctamente.")
 
     except Exception as e:
         print(f"Error al agregar documento en Firestore: {e}")
