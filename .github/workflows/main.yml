@@ -21,7 +21,7 @@ jobs:
           host: ${{ vars.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "./backend-api/"
+          source: "./backend-api/*"
           target: "/home/ubuntu/facedetection"
           rm: true  # Elimina los archivos existentes en el destino
 
