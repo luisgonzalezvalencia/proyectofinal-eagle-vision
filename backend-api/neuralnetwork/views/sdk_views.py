@@ -7,9 +7,14 @@ from rest_framework import viewsets
 from neuralnetwork.dataprocess.implementation import retornar_presentes, runTest, check_in_data_client
 from PIL import Image
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
+
+from neuralnetwork.firebase_auth_sdk import FirebaseAuthenticationSDK
 
 # Create your views here.
 class SdkViewSet(viewsets.ViewSet):
+    authentication_classes = [FirebaseAuthenticationSDK]
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser,)
     # self: class instance
     # request: http request object with some transformations and params
@@ -32,8 +37,11 @@ class SdkViewSet(viewsets.ViewSet):
     def post(self, request):
         try:
             # Obtener el archivo de la solicitud
-            client_id = request.data.get('client_id')
+            client_id = request.user.clientId
             file = request.FILES['file']
+            if not client_id or not file:
+                return Response({"error": "Error en los datos proporcionados"}, status=status.HTTP_400_BAD_REQUEST)
+            
             image = Image.open(file)
             if image.mode == 'RGBA':
                 image = image.convert('RGB')
