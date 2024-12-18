@@ -7,13 +7,13 @@ on:
       - main
     paths:
       - 'backend-api/**'
+      - '.github/workflows/**'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Checkout del código del repositorio
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -27,7 +27,7 @@ jobs:
           target: "/home/ubuntu/facedetection"
           rm: true  # Elimina los archivos existentes en el destino
 
-      - name: Create config files and restart services
+      - name: Create config files
         uses: appleboy/ssh-action@master
         with:
           host: ${{ vars.EC2_HOST }}
@@ -37,16 +37,18 @@ jobs:
             cd /home/ubuntu/facedetection/backend-api
 
             # Crear archivo .env
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > .env
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-            echo "AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}" >> .env
-            echo "AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}" >> .env
-            echo "AWS_S3_CUSTOM_DOMAIN=f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'" >> .env
-            echo "MEDIA_URL"= f'https://{AWS_S3_CUSTOM_DOMAIN}/'" >> .env
-            echo "DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'" >> .env
+            cat > .env <<EOF
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
+            AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+            AWS_S3_CUSTOM_DOMAIN=${{ secrets.AWS_STORAGE_BUCKET_NAME }}.s3.amazonaws.com
+            MEDIA_URL=https://${{ secrets.AWS_STORAGE_BUCKET_NAME }}.s3.amazonaws.com/
+            DEFAULT_FILE_STORAGE=storages.backends.s3boto3.S3Boto3Storage
+            EOF
 
             # Crear archivo JSON de Firebase
-            cat <<EOF > config/eagle-vision-firebase.json
+            cat > config/eagle-vision-firebase.json <<'EOF'
             {
               "type": "service_account",
               "project_id": "${{ secrets.FIRE_BASE_PROJECT_ID }}",
@@ -70,10 +72,31 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/facedetection/backend-api
+
+            # Instalar dependencias
             python3 -m venv venv
             source venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
-            sudo apt install gunicorn
-            sudo systemctl stop gunicorn
-            gunicorn --workers 3 --bind 127.0.0.1:8000 main.wsgi:application
+
+            # Configurar Gunicorn con venv
+            sudo systemctl stop gunicorn || true
+            cat > /etc/systemd/system/gunicorn.service <<EOF
+            [Unit]
+            Description=gunicorn daemon
+            After=network.target
+
+            [Service]
+            User=ubuntu
+            Group=www-data
+            WorkingDirectory=/home/ubuntu/facedetection/backend-api
+            ExecStart=/home/ubuntu/facedetection/backend-api/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 main.wsgi:application
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF
+
+            sudo systemctl daemon-reload
+            sudo systemctl start gunicorn
+            sudo systemctl enable gunicorn
+            sudo systemctl restart nginx
