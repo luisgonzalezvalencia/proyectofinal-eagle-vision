@@ -30,6 +30,23 @@ async function realizarCheckIn(faceImageBase64) {
 }
 ```
 
+Este es un ejemplo básico de cómo utilizar el SDK en una aplicación con Typescript
+
+```typescript
+import FacialRecognitionSDK from 'eagle-vision-sdk';
+
+const sdk = new FacialRecognitionSDK('TU_API_KEY', 'API_URL_VERSION');
+
+// Ejemplo de check-in
+async function realizarCheckIn(faceImageBase64: string): Promise<void> {
+  try {
+    const resultado = await sdk.checkIn(faceImageBase64);
+    console.log('Check-in exitoso:', resultado);
+  } catch (error) {
+    console.error('Error en el check-in:', error);
+  }
+}
+```
 
 ## Métodos principales
 

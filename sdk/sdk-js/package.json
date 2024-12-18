@@ -1,9 +1,12 @@
 {
   "name": "eagle-vision-sdk",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Eagle Vision SDK es una herramienta de reconocimiento facial diseñada para la autenticación de usuarios en tiempo real. Facilita la integración de funciones de check-in, gestión de usuarios, y obtención de registros de asistencia en aplicaciones web. Ideal para proyectos de control de acceso y toma de asistencia mediante tecnología facial.",
-  "main": "FacialRecognition.js",
+  "main": "./dist/FacialRecognition.js",
+  "types": "./dist/FacialRecognition.d.ts",
   "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +22,7 @@
     "face-detection",
     "nodejs",
     "javascript",
+    "typescript",
     "machine-learning",
     "AI",
     "security"
@@ -28,5 +32,12 @@
   "bugs": {
     "url": "https://github.com/luisgonzalezvalencia/proyectofinal-eagle-vision/issues"
   },
-  "homepage": "https://github.com/luisgonzalezvalencia/proyectofinal-eagle-vision#readme"
+  "homepage": "https://github.com/luisgonzalezvalencia/proyectofinal-eagle-vision#readme",
+  "devDependencies": {
+    "typescript": "^5.2.0"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ]
 }
