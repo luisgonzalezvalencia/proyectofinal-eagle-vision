@@ -7,9 +7,9 @@ export interface Client {
 }
 
 export interface UserClient {
-  id: string;
-  userId: string;
   clientId: number;
+  userId: string;
+  createdAt: string;
 }
 
 export interface BackgroundTask {

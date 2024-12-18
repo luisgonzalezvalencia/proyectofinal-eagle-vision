@@ -19,7 +19,7 @@ import { Client, UserClient } from '../models';
 export class ClientService {
   private clientCollection = 'clients';
   private usersClientCollection = 'usersClient';
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore) { }
 
   get(userId: string): Observable<Client | null> {
     const colRef = collection(this.firestore, this.clientCollection);
@@ -61,12 +61,14 @@ export class ClientService {
 
   getUsers(clientId: number): Observable<UserClient[]> {
     const colRef = collection(this.firestore, this.usersClientCollection);
-    const q = query(colRef, where('clientId', '==', clientId));
+    const q = query(colRef, where('clientId', '==', clientId.toString()));
 
     return from(getDocs(q)).pipe(
       map((snapshot) =>
         snapshot.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() } as UserClient)
+          (doc) => {
+            return { userId: doc.id, ...doc.data() } as UserClient
+          }
         )
       )
     );
