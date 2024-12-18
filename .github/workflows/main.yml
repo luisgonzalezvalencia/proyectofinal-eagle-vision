@@ -5,6 +5,8 @@ on:
     branches:
       - develop
       - main
+    paths:
+      - 'backend-api/**'
 
 jobs:
   deploy:
@@ -25,6 +27,39 @@ jobs:
           target: "/home/ubuntu/facedetection"
           rm: true  # Elimina los archivos existentes en el destino
 
+      - name: Create config files and restart services
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/facedetection/backend-api
+
+            # Crear archivo .env
+            echo "DEBUG=True" > .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+            echo "FIREBASE_PROJECT_ID=eagle-vision-2e6cb" >> .env
+            echo "FIREBASE_STORAGE_BUCKET=eagle-vision.appspot.com" >> .env
+
+            # Crear archivo JSON de Firebase
+            cat <<EOF > config/eagle-vision-firebase.json
+            {
+              "type": "service_account",
+              "project_id": "${{ secrets.FIRE_BASE_PROJECT_ID }}",
+              "private_key_id": "${{ secrets.FIREBASE_PRIVATE_KEY_ID }}",
+              "private_key": "${{ secrets.FIREBASE_PRIVATE_KEY }}",
+              "client_email": "firebase-adminsdk-5mnid@eagle-vision-2e6cb.iam.gserviceaccount.com",
+              "client_id": "11375898870055028674",
+              "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+              "token_uri": "https://oauth2.googleapis.com/token",
+              "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+              "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-5mnid%40eagle-vision-2e6cb.iam.gserviceaccount.com",
+              "universe_domain": "googleapis.com"
+            }
+            EOF
+
       - name: Install dependencies and restart services
         uses: appleboy/ssh-action@master
         with:
@@ -37,5 +72,6 @@ jobs:
             source venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
-            sudo systemctl restart gunicorn
-            sudo systemctl restart nginx
+            sudo apt install gunicorn
+            sudo systemctl stop gunicorn
+            gunicorn --workers 3 --bind 127.0.0.1:8000 main.wsgi:application
