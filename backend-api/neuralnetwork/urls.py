@@ -19,10 +19,12 @@ from neuralnetwork.views.sdk_views import SdkViewSet
 data = SdkViewSet.as_view({'get':'get', 'post':'post'})
 uploadImage = ClientViewSet.as_view({'post':'upload_image_data'})
 uploadZip = ClientViewSet.as_view({'post':'upload_zip_client'})
+trainDataClient = ClientViewSet.as_view({'post':'init_training_manually'})
 
 urlpatterns = [
     path("check", data),
     path('upload-image', uploadImage),
     path('upload-zip', uploadZip),
+    path('train-data-client', trainDataClient)
     # path('neuralnetwork/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

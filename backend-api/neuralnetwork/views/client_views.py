@@ -9,7 +9,9 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.parsers import MultiPartParser, FormParser
+from neuralnetwork.firebase_functions import add_user_client
 from neuralnetwork.serializers.url_image_serializer import UserImageSerializer
+from neuralnetwork.dataprocess.implementation import training_data
 
 # Create your views here.
 class ClientViewSet(viewsets.ViewSet):
@@ -81,6 +83,17 @@ class ClientViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def init_training_manually(self, request, *args, **kwargs):
+        client_id = request.data.get('client_id')
+        if not client_id:
+            return Response({"error": "client_id es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        client_trained = training_data(client_id)
+        if client_trained:
+            return Response({"message": "Entrenamiento realizado."}, status=status.HTTP_200_OK)
+
+        return Response({"error": "Hubo un problema en el entrenamiento. Intente nuevamente."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
     # TODO: Agregar task id para poder consultar el estado de la subida
     def process_zip_upload(self, client_id, zip_file_path):
@@ -96,7 +109,7 @@ class ClientViewSet(viewsets.ViewSet):
             # Abrir y procesar el archivo ZIP
             with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
                 for file_name in zip_ref.namelist():
-                    if file_name.endswith('/'):
+                    if file_name.endswith('/') or "MACOSX" in file_name:
                         continue  # Ignorar directorios
 
                     # Leer el archivo del ZIP
@@ -111,8 +124,9 @@ class ClientViewSet(viewsets.ViewSet):
                         Key=s3_key,
                         Body=file_data
                     )
-
-                    # TODO: Agregar usersClient en firebase si no existe
+                    user_id = file_name.split('/')[0]
+                    # Agregar usersClient en firebase si no existe
+                    add_user_client(client_id, user_id, s3_key)
 
 
             print("Subida completada.")

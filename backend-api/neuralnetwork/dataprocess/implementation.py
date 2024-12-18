@@ -612,16 +612,15 @@ def check_in_data_client(imageEvalued=None, client_id=None):
             print("Diccionario cargado desde S3.")
     except Exception:
         pass
-
+    
+    # si el diccionario no existe, hay que crearlo entrenando las imagenes
     if dic_referencia is None:
         print("Creando diccionario de referencia...")
-        dic_referencia = crear_diccionario_referencia_s3(bucket_name, s3_folder_images)
-        # Subir diccionario a S3
-        with io.BytesIO() as buffer:
-            pickle.dump(dic_referencia, buffer)
-            buffer.seek(0)
-            upload_file_to_s3(bucket_name, f'{s3_diccionario_path}{nombre_diccionario}', buffer.getvalue())
+        dic_referencia = training_data(client_id)
 
+    if dic_referencia is None:
+        raise Exception("No se pudo crear el diccionario de referencia.")
+    
     # Evaluar imagen
     if imageEvalued is None:
         image_file = download_file_from_s3(bucket_name, 'assets/images/grupoGrande.PNG')
@@ -642,6 +641,41 @@ def check_in_data_client(imageEvalued=None, client_id=None):
     # guardar_presentes(identidades_presentes) TODO: guardar en firebase o s3
     
     return boxes, identidades_presentes
+
+def training_data(client_id):
+    """
+    Entrena un diccionario de referencias para un cliente.
+    
+    Crea un diccionario de referencias a partir de las imagenes de un cliente
+    en S3 y lo sube a S3.
+    
+    Parameters
+    ----------
+    client_id : str
+        Identificador del cliente.
+    
+    Returns
+    -------
+    dict
+        Diccionario de referencias.
+    """
+    
+    try:
+        bucket_name = os.environ['AWS_STORAGE_BUCKET_NAME']
+        s3_folder_images = f'{client_id}/'
+        s3_diccionario_path = f'{client_id}/diccionarios/'
+        nombre_diccionario = generar_nombre_archivo()
+        dic_referencia = crear_diccionario_referencia_s3(bucket_name, s3_folder_images)
+        # Subir diccionario a S3
+        with io.BytesIO() as buffer:
+            pickle.dump(dic_referencia, buffer)
+            buffer.seek(0)
+            upload_file_to_s3(bucket_name, f'{s3_diccionario_path}{nombre_diccionario}', buffer.getvalue())
+        return dic_referencia
+    except Exception as e:
+        print(f"Error al subir diccionario a S3: {e}")
+        return None
+            
 
 def generar_nombre_archivo(nombre= "diccionario"):
     fecha_actual = datetime.date.today()
