@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ERROR_MESSAGES } from './error-messages.es';
 import { HttpRequestService } from './http-request.service';
 
-export interface UploadZipResponse {
+export interface MessageOrErrorResponse {
   message?: string
   error?: string
 }
@@ -30,8 +30,12 @@ export class CheckService {
     return errorMessage.replace('{{requiredLength}}', error[errorKey].requiredLength);
   }
 
-  uploadZip(formData: FormData): Observable<UploadZipResponse> {
+  uploadZip(formData: FormData): Observable<MessageOrErrorResponse> {
     return this.httpRequestService.postData('upload-zip', formData, 'json');
+  }
+
+  startTraining(formData: FormData): Observable<MessageOrErrorResponse> {
+    return this.httpRequestService.postData('train-data-client', formData, 'json');
   }
 
 
