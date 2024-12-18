@@ -18,19 +18,22 @@ export class AuthService {
   private isInitializedSubject = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private currentClientSubject = new BehaviorSubject<Client | null>(null);
+  private currentToken: string | null = null;
 
   constructor(private auth: Auth, private clientService: ClientService) {
     this.auth.onAuthStateChanged((user) => {
       this.currentUserSubject.next(user);
 
       if (user) {
-        this.clientService.get(user.uid).subscribe((client) => {
+        this.clientService.get(user.uid).subscribe(async (client) => {
           this.currentClientSubject.next(client);
           this.isInitializedSubject.next(true);
+          this.currentToken = await user.getIdToken();
         });
       } else {
         this.currentClientSubject.next(null);
         this.isInitializedSubject.next(true);
+        this.currentToken = null;
       }
     });
   }
@@ -57,6 +60,10 @@ export class AuthService {
 
   get userId(): string | null {
     return this.currentUserSubject.value?.uid || null;
+  }
+
+  get userAccessToken(): string | null {
+    return this.currentToken;
   }
 
   // Sign in with email and password

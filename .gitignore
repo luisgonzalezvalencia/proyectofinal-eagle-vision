@@ -50,3 +50,4 @@ Thumbs.db
 
 backend-api/github-action
 backend-api/github-action.pub
+backend-api/config/eagle-vision-firebase.json

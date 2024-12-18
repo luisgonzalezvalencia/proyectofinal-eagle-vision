@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   firebase: {
     projectId: import.meta.env.NG_APP_FIREBASE_PROJECT_ID,
     appId: import.meta.env.NG_APP_FIREBASE_APP_ID,

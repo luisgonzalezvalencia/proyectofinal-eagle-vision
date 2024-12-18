@@ -1,7 +1,8 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { environment } from "../../environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({ providedIn: 'root' })
 export class HttpRequestService {
@@ -9,9 +10,22 @@ export class HttpRequestService {
     BASE_URL = environment.production ? 'https://eaglevision-ia.com' : 'http://127.0.0.1:8000';
 
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private auth: AuthService
     ) {
 
+    }
+
+    getAuthHeaders(): HttpHeaders {
+        console.log('auth.currentUser', this.auth.currentUser);
+        const token = this.auth.userAccessToken;
+        if (token) {
+            return new HttpHeaders({
+                Authorization: `Bearer ${token}`, // Encabezado con el token
+            });
+        }
+
+        return new HttpHeaders(); // Sin token si no hay usuario autenticado
     }
 
     /**
@@ -24,7 +38,14 @@ export class HttpRequestService {
      * @returns An Observable of the response.
      */
     postData(url: string, data: any, responseType: any): Observable<any> {
-        return this.http.post(`${this.BASE_URL}/${url}`, data, { responseType: responseType });
+        const headers = this.getAuthHeaders();
+        return this.http.post(`${this.BASE_URL}/${url}`,
+            data,
+            {
+                headers: headers,
+                responseType: responseType
+            }
+        );
     }
 
     /**
@@ -36,7 +57,11 @@ export class HttpRequestService {
      * @returns An Observable of the response.
      */
     getData(url: string, responseType: any): Observable<any> {
-        return this.http.get(url, { responseType: responseType });
+        const headers = this.getAuthHeaders();
+        return this.http.get(url, {
+            headers: headers,
+            responseType: responseType
+        });
     }
 
     /**
@@ -49,7 +74,11 @@ export class HttpRequestService {
      */
 
     putData(url: string, data: any, responseType: any): Observable<any> {
-        return this.http.put(url, data, { responseType: responseType });
+        const headers = this.getAuthHeaders();
+        return this.http.put(url, data, {
+            headers: headers,
+            responseType: responseType
+        });
     }
 
     /**
@@ -60,7 +89,11 @@ export class HttpRequestService {
      * @returns An Observable of the response.
      */
     deleteData(url: string, responseType: any): Observable<any> {
-        return this.http.delete(url, { responseType: responseType });
+        const headers = this.getAuthHeaders();
+        return this.http.delete(url, {
+            headers: headers,
+            responseType: responseType
+        });
     }
 
 }

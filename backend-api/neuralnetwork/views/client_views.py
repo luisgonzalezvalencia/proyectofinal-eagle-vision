@@ -6,12 +6,14 @@ import boto3
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.parsers import MultiPartParser, FormParser
 from neuralnetwork.serializers.url_image_serializer import UserImageSerializer
 
 # Create your views here.
 class ClientViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
     # self: class instance
     # request: http request object with some transformations and params
