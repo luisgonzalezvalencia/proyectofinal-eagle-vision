@@ -35,7 +35,7 @@ export default function CheckInPage() {
       const mensaje = users.length > 1 ? `Bienvenidos, ${users.join(', ')}!` : `Bienvenido, ${users[0] || 'Usuario'}!`;
       //TODO: almacenar visualmente los asistentes
       setUserList((prev) => [...prev, ...users]);
-      setStatus(`Bienvenido, ${result.users || 'Usuario'}!`);
+      setStatus(`Bienvenido, ${mensaje}`);
       startTimer(15, resetState);
     } catch {
       setStatus('Error: No se pudo verificar el check-in.');
