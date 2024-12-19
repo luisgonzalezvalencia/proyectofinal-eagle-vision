@@ -34,6 +34,10 @@ export class CheckService {
     return this.httpRequestService.postData('upload-zip', formData, 'json');
   }
 
+  uploadImage(formData: FormData): Observable<MessageOrErrorResponse> {
+    return this.httpRequestService.postData('upload-image', formData, 'json');
+  }
+
   startTraining(formData: FormData): Observable<MessageOrErrorResponse> {
     return this.httpRequestService.postData('train-data-client', formData, 'json');
   }

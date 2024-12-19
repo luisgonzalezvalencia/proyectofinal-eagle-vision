@@ -39,13 +39,15 @@ class ClientViewSet(viewsets.ViewSet):
             )
 
             # Generar la ruta en S3
-            s3_key = f'{client_id}/users/{user_id}/{image.name}'
+            s3_key = f'{client_id}/{user_id}/{image.name}'
 
             # Subir a S3
             try:
                 s3.upload_fileobj(image.file, os.environ['AWS_STORAGE_BUCKET_NAME'], s3_key)
 
-                # TODO: Agregar usersClient en firebase si no existe
+                # Agregar usersClient en firebase si no existe
+                add_user_client(client_id, user_id, s3_key)
+                
                 return Response({"message": "Imagen subida correctamente", "s3_key": s3_key}, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

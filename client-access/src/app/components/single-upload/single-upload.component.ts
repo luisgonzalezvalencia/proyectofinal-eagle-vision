@@ -9,13 +9,16 @@ import {
 import { delay, of, switchMap, take } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { CheckService } from '../../services/check.service';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpRequestService } from '../../services/http-request.service';
 
 @Component({
   selector: 'app-single-upload',
   standalone: true,
   templateUrl: './single-upload.component.html',
-  imports: [NgIf, ReactiveFormsModule],
-  providers: [],
+  imports: [NgIf, HttpClientModule, ReactiveFormsModule],
+  providers: [CheckService, HttpRequestService],
 })
 export class SingleUploadComponent {
   uploadForm: FormGroup = new FormGroup({
@@ -27,8 +30,9 @@ export class SingleUploadComponent {
 
   constructor(
     private authService: AuthService,
-    private toastService: ToastService
-  ) {}
+    private toastService: ToastService,
+    private checkService: CheckService
+  ) { }
 
   // Evento que se dispara al seleccionar un archivo
   onFileSelected(event: Event): void {
@@ -61,21 +65,20 @@ export class SingleUploadComponent {
 
     this.authService.currentClient$
       .pipe(
-        delay(2000), // TODO: Eliminar despues de implementar la api
         take(1),
         switchMap((client) => {
           const formData = new FormData();
-          formData.append('file', this.file as File);
-          formData.append('userId', userId);
-          formData.append('clientId', String(client?.clientId));
+          formData.append('image', this.file as File);
+          formData.append('user_id', userId);
+          formData.append('client_id', String(client?.clientId));
 
-          return of({ status: 'ok', message: 'Archivo subido correctamente' });
+          return this.checkService.uploadImage(formData);
         })
       )
       .subscribe({
         next: (response) => {
           this.toastService.success(
-            response.message ?? 'Archivo subido correctamente'
+            response.message ?? response.error ?? 'Ocurrio un Error'
           );
           this.resetForm();
         },
