@@ -1,3 +1,5 @@
+import base64
+from io import BytesIO
 import json
 from django.http import HttpResponse
 from rest_framework import status
@@ -6,7 +8,7 @@ from rest_framework import viewsets
 
 from neuralnetwork.dataprocess.implementation import retornar_presentes, runTest, check_in_data_client
 from PIL import Image
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 
 from neuralnetwork.firebase_auth_sdk import FirebaseAuthenticationSDK
@@ -15,7 +17,7 @@ from neuralnetwork.firebase_auth_sdk import FirebaseAuthenticationSDK
 class SdkViewSet(viewsets.ViewSet):
     authentication_classes = [FirebaseAuthenticationSDK]
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser,)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
     # self: class instance
     # request: http request object with some transformations and params
     def get(self, request):
@@ -38,11 +40,18 @@ class SdkViewSet(viewsets.ViewSet):
         try:
             # Obtener el archivo de la solicitud
             client_id = request.user.clientId
-            file = request.FILES['file']
-            if not client_id or not file:
+            base64_image = request.data.get('faceImage')
+            if not client_id or not base64_image:
                 return Response({"error": "Error en los datos proporcionados"}, status=status.HTTP_400_BAD_REQUEST)
             
-            image = Image.open(file)
+            if "," in base64_image:
+                base64_image = base64_image.split(",")[1]
+                
+            # Decodificar Base64 a binario
+            image_parsed = base64.b64decode(base64_image)
+            
+            # Convertir los datos en un objeto BytesIO
+            image = Image.open(BytesIO(image_parsed))
             if image.mode == 'RGBA':
                 image = image.convert('RGB')
 
