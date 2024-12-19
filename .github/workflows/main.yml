@@ -16,6 +16,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Clean EC2 except venv
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/facedetection/backend-api
+            find . -mindepth 1 -not -path './venv/*' -not -name 'venv' -exec rm -rf {} +
 
       - name: Copy code to EC2
         uses: appleboy/scp-action@master
@@ -25,7 +35,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "./backend-api/*"
           target: "/home/ubuntu/facedetection"
-          rm: true  # Elimina los archivos existentes en el destino
+          rm: false  # Elimina los archivos existentes en el destino
 
       - name: Create config files
         uses: appleboy/ssh-action@master
@@ -78,25 +88,5 @@ jobs:
             source venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
-
-            # Configurar Gunicorn con venv
-            sudo systemctl stop gunicorn || true
-            cat > /etc/systemd/system/gunicorn.service <<EOF
-            [Unit]
-            Description=gunicorn daemon
-            After=network.target
-
-            [Service]
-            User=ubuntu
-            Group=www-data
-            WorkingDirectory=/home/ubuntu/facedetection/backend-api
-            ExecStart=/home/ubuntu/facedetection/backend-api/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 main.wsgi:application
-
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-
-            sudo systemctl daemon-reload
-            sudo systemctl start gunicorn
-            sudo systemctl enable gunicorn
+            sudo systemctl restart gunicorn
             sudo systemctl restart nginx

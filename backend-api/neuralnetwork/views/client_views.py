@@ -126,6 +126,7 @@ class ClientViewSet(viewsets.ViewSet):
                         Key=s3_key,
                         Body=file_data
                     )
+                    print(f"Archivo subido a S3: {s3_key}")
                     user_id = file_name.split('/')[0]
                     # Agregar usersClient en firebase si no existe
                     add_user_client(client_id, user_id, s3_key)
