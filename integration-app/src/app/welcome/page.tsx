@@ -26,13 +26,13 @@ export default function CheckInPage() {
     // Llamar al SDK y manejar el progreso
     try {
       const result = await sdk.checkIn(screenshot); // Llamada al método del SDK
-      let users = result.users;
+      const users = result.users;
       if (users.length === 0) {
         setStatus('Error: No se pudo verificar la identidad, intenta nuevamente.');
         startTimer(5, resetState);
         return;
       }
-      let mensaje = users.length > 1 ? `Bienvenidos, ${users.join(', ')}!` : `Bienvenido, ${users[0] || 'Usuario'}!`;
+      const mensaje = users.length > 1 ? `Bienvenidos, ${users.join(', ')}!` : `Bienvenido, ${users[0] || 'Usuario'}!`;
       //TODO: almacenar visualmente los asistentes
       setUserList((prev) => [...prev, ...users]);
       setStatus(`Bienvenido, ${result.users || 'Usuario'}!`);
