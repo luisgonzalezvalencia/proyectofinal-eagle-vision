@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -56,7 +56,12 @@ class SdkViewSet(viewsets.ViewSet):
                 image = image.convert('RGB')
 
             check_in_bounding_box, identidades = check_in_data_client(image, client_id)
-            return HttpResponse(identidades, content_type='application/json')
+            
+            data_response = {
+                "users": identidades,
+            }
+            
+            return JsonResponse(data_response, content_type='application/json')
         except Exception as e:
             return Response(
                 {"error": str(e)},
