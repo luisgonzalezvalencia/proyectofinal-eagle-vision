@@ -80,4 +80,4 @@ jobs:
             pip install -r requirements.txt
             pip install gunicorn
             sudo systemctl restart nginx
-            gunicorn --workers 3 --timeout 300 --bind 127.0.0.1:8000 main.wsgi:application
+            gunicorn --workers 3 --timeout 300 --bind 127.0.0.1:8000 main.wsgi:application &
