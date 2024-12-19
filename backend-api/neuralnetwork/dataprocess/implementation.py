@@ -431,6 +431,12 @@ def crear_diccionario_referencia_s3(bucket_name, folder_path_s3, **kwargs):
 
     # Listar objetos en S3
     s3_objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_path_s3)
+    
+    #validar si no hay imagenes, devolver el error
+    if 'Contents' not in s3_objects:
+        raise Exception(
+            f"No se encontraron usuarios para el entrenamiento, debe cargarlos del portal."
+        )
 
     for obj in s3_objects.get('Contents', []):
         try:
@@ -614,12 +620,15 @@ def check_in_data_client(imageEvalued=None, client_id=None):
         pass
     
     # si el diccionario no existe, hay que crearlo entrenando las imagenes
-    if dic_referencia is None:
+    if  len(dic_referencia) == 0:
         print("Creando diccionario de referencia...")
         dic_referencia = training_data(client_id)
 
     if dic_referencia is None:
         raise Exception("No se pudo crear el diccionario de referencia.")
+    
+    if len(dic_referencia) == 0:
+        raise Exception("No se encontraron usuarios ni imagenes. Debe cargarlos desde el portal.")
     
     # Evaluar imagen
     if imageEvalued is None:
