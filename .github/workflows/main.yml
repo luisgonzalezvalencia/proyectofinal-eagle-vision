@@ -16,6 +16,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Clean EC2 except venv
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/facedetection/backend-api
+            find . -mindepth 1 -not -name 'venv' -exec rm -rf {} +
 
       - name: Copy code to EC2
         uses: appleboy/scp-action@master
@@ -25,7 +35,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "./backend-api/*"
           target: "/home/ubuntu/facedetection"
-          rm: true  # Elimina los archivos existentes en el destino
+          rm: false  # Elimina los archivos existentes en el destino
 
       - name: Create config files
         uses: appleboy/ssh-action@master
@@ -80,4 +90,5 @@ jobs:
             pip install -r requirements.txt
             pip install gunicorn
             sudo systemctl restart nginx
-            gunicorn --workers 3 --timeout 300 --bind 127.0.0.1:8000 main.wsgi:application &
+            pkill -f gunicorn
+            nohup gunicorn --workers 3 --timeout 300 --bind 127.0.0.1:8000 main.wsgi:application > gunicorn.log 2>&1 &
