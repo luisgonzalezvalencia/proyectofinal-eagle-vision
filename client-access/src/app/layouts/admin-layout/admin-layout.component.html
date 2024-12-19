@@ -4,9 +4,7 @@
       <a href="#" class="navbar-brand">
         <img src="logo2.png" width="30" height="30" /> Eagle Vision
       </a>
-      <div>
-        Plan free (30 dias) - <a [routerLink]="['plans']">Actualizar a premium</a>
-      </div>
+      <app-plan-info />
 
       <button class="btn btn-outline-danger" type="button" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>

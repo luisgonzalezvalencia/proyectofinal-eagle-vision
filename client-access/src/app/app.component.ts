@@ -28,13 +28,19 @@ export class AppComponent implements OnInit {
             this.router.navigate(['/auth/login']);
           } else {
             this.authService.currentClient$.subscribe((client) => {
-              console.log('client', client);
               if (!client || !client.expirationDate) {
                 this.router.navigate(['/auth/subscribe']);
               } else if (isPast(parseISO(client.expirationDate))) {
                 this.router.navigate(['/auth/payment']);
               } else {
-                this.router.navigate(['/admin/home']);
+                const cleanedUrl = [
+                  '/auth/login',
+                  '/auth/register',
+                  '/auth/subscribe',
+                ].some((url) => this.router.url.startsWith(url))
+                  ? '/admin/home'
+                  : this.router.url;
+                this.router.navigate([cleanedUrl]);
               }
             });
           }
