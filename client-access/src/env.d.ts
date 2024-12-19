@@ -8,6 +8,7 @@ declare interface Env {
   readonly NG_APP_FIREBASE_AUTH_DOMAIN: string;
   readonly NG_APP_FIREBASE_MESSAGING_SENDER_ID: string;
   readonly NG_APP_FIREBASE_MEASUREMENT_ID: string;
+  readonly NG_APP_IS_PRODUCTION: boolean;
   // Replace the following with your own environment variables.
   [key: string]: any;
 }
