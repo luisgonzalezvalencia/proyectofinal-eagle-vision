@@ -11,6 +11,7 @@ export default function CheckInPage() {
   const [status, setStatus] = useState<string>();
   const [image, setImage] = useState<string | null>(null);
   const [timer, setTimer] = useState<number | null>(null);
+  const [userList, setUserList] = useState<string[]>([]);
 
   // Captura la imagen desde la cámara
   const captureImage = async () => {
@@ -25,11 +26,20 @@ export default function CheckInPage() {
     // Llamar al SDK y manejar el progreso
     try {
       const result = await sdk.checkIn(screenshot); // Llamada al método del SDK
-      setStatus(`Bienvenido, ${result.name || 'Usuario'}!`);
+      let users = result.users;
+      if (users.length === 0) {
+        setStatus('Error: No se pudo verificar la identidad, intenta nuevamente.');
+        startTimer(5, resetState);
+        return;
+      }
+      let mensaje = users.length > 1 ? `Bienvenidos, ${users.join(', ')}!` : `Bienvenido, ${users[0] || 'Usuario'}!`;
+      //TODO: almacenar visualmente los asistentes
+      setUserList((prev) => [...prev, ...users]);
+      setStatus(`Bienvenido, ${result.users || 'Usuario'}!`);
       startTimer(15, resetState);
     } catch {
       setStatus('Error: No se pudo verificar el check-in.');
-      startTimer(30, resetState);
+      startTimer(5, resetState);
     }
   };
 
@@ -85,6 +95,18 @@ export default function CheckInPage() {
 
       {/* Temporizador */}
       {timer !== null && <p className="mt-2 text-sm text-gray-500">Reiniciando en {timer} segundos...</p>}
+
+      {/* Lista de Usuarios */}
+      <div className="mt-6 w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-2 text-gray-500">Ids últimos usuarios detectados:</h2>
+        <ul className="list-disc list-inside bg-white p-4 rounded shadow">
+          {userList.map((user, index) => (
+            <li key={index} className="text-gray-700">
+              {user}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

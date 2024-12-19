@@ -1,0 +1,13 @@
+<div *ngIf="remainingDays$ | async as remainingDays">
+    <span class="badge" [ngClass]="{
+      'bg-danger': remainingDays <= 5,
+      'bg-warning': remainingDays > 5 && remainingDays <= 10,
+      'bg-secondary': remainingDays > 10
+    }">
+        {{ remainingDays }} días restantes
+    </span>
+    <span class="plan-info">
+        {{ formatPlan(planType) }} -
+        <a [routerLink]="['plans']">Actualizar a premium</a>
+    </span>
+</div>

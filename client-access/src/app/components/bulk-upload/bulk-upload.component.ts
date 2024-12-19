@@ -11,6 +11,7 @@ import { ToastService } from '../../services/toast.service';
   selector: 'app-bulk-upload',
   standalone: true,
   templateUrl: './bulk-upload.component.html',
+  styleUrl: './bulk-upload.component.scss',
   imports: [NgIf, HttpClientModule],
   providers: [CheckService, HttpRequestService],
 })

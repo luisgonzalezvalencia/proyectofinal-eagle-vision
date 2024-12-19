@@ -1,9 +1,19 @@
 <div class="card h-100">
     <div class="card-body">
         <h5 class="card-title text-center">Carga Masiva de Usuarios</h5>
-        <p class="card-text text-center">
-            Sube un archivo <strong>ZIP</strong> con múltiples imágenes de usuarios.
-        </p>
+        <p>Sube un archivo <strong>ZIP</strong> con múltiples imágenes de usuarios organizadas en carpetas.</p>
+
+        <!-- Ejemplo visual de la estructura -->
+        <div class="folder-info">
+            <pre>
+            📁 id_usuario_1/
+                ├── imagen1.jpg
+                └── imagen2.png
+            📁 id_usuario_2/
+                ├── imagen1.png
+                └── imagen2.jpg
+            </pre>
+        </div>
 
         <div class="text-center mt-3">
             <button class="btn btn-outline-primary" (click)="fileInput.click()" [disabled]="uploading">

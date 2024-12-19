@@ -15,7 +15,7 @@ export class PaymentComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   pay() {
-    alert('Payment will be implemented in the next sprint');
+    this.router.navigate(['/admin/plans']);
   }
 
   goBack() {

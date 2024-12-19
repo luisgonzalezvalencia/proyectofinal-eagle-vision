@@ -8,4 +8,10 @@ export const ADMIN_ROUTES: Routes = [
       import('./home/home.component').then((m) => m.HomeComponent),
     ...canActivate(() => redirectUnauthorizedTo(['login'])),
   },
+  {
+    path: 'plans',
+    loadComponent: () =>
+      import('./plans/plans.component').then((m) => m.PlansComponent),
+    ...canActivate(() => redirectUnauthorizedTo(['login'])),
+  },
 ];
