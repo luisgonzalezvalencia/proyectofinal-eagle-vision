@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
 @Injectable({ providedIn: 'root' })
 export class HttpRequestService {
 
-    BASE_URL = environment.production ? 'https://api.eaglevision-ia.com' : 'http://127.0.0.1:8000';
+    BASE_URL = 'https://api.eaglevision-ia.com';
 
     constructor(
         private http: HttpClient,
