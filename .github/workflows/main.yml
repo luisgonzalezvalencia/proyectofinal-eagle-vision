@@ -88,7 +88,5 @@ jobs:
             source venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
-            pip install gunicorn
+            sudo systemctl restart gunicorn
             sudo systemctl restart nginx
-            pkill -f gunicorn
-            nohup gunicorn --workers 3 --timeout 300 --bind 127.0.0.1:8000 main.wsgi:application > gunicorn.log 2>&1 &
