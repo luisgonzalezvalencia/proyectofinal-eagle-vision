@@ -620,7 +620,7 @@ def check_in_data_client(imageEvalued=None, client_id=None):
         pass
     
     # si el diccionario no existe, hay que crearlo entrenando las imagenes
-    if  len(dic_referencia) == 0:
+    if dic_referencia is None or len(dic_referencia) == 0:
         print("Creando diccionario de referencia...")
         dic_referencia = training_data(client_id)
 
