@@ -14,32 +14,31 @@ db = firestore.client()
 
 def add_user_client(client_id, id_user, s3_key):
     try:
-        # Referencia a la colección usersClient y documento de usuario
-        user_doc_ref = db.collection("usersClient").document(id_user)
-
-        # Crear o actualizar el documento del usuario
-        user_doc_ref.set({
+         # Referencia a la colección usersClient
+        users_client_ref = db.collection("usersClient")
+        
+        # Crear o actualizar el documento del usuario (Firestore genera automáticamente el ID)
+        user_data = {
             "userId": id_user,
             "clientId": client_id,
             "createdAt": datetime.utcnow().isoformat()
-        }, merge=True)
+        }
+        user_doc_ref = users_client_ref.add(user_data)
+        print(f"Documento de usuario creado con ID: {user_doc_ref[1].id}")
 
         # Referencia a la colección images
         images_ref = db.collection("images")
 
-        # Generar un nombre único para el documento de la imagen
-        image_doc_id = f"{id_user}_{s3_key.split('/')[-1].replace('.', '_')}"
-
-        # Agregar el documento de imagen a la colección images
-        images_ref.document(image_doc_id).set({
+        # Crear el documento de la imagen en la colección images
+        image_data = {
             "clientId": client_id,
             "userId": id_user,
             "fileName": s3_key.split('/')[-1],
             "s3Path": s3_key,
             "uploadedAt": datetime.utcnow().isoformat(),
-        })
-
-        print(f"Usuario {id_user} y su imagen {image_doc_id} registrados en Firestore correctamente.")
+        }
+        image_doc_ref = images_ref.add(image_data)  # Firestore genera automáticamente el ID
+        print(f"Documento de imagen creado con ID: {image_doc_ref[1].id}")
 
     except Exception as e:
         print(f"Error al agregar documento en Firestore: {e}")
