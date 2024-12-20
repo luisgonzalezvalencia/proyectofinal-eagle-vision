@@ -1,77 +1,83 @@
 <div class="container mt-4">
-    <div class="row">
-      <!-- Plan Premium Light -->
-      <div class="col-md-3">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title text-center">Premium Light</h5>
-            <h6 class="card-subtitle mb-2 text-muted text-center">$10 USD/mes</h6>
-            <ul class="list-unstyled text-center">
-              <li>✔ Hasta 20 usuarios</li>
-              <li>✔ 5 entrenamientos mensuales</li>
-              <li>✔ Soporte por mail</li>
-            </ul>
-          </div>
-          <div class="card-footer text-center">
-            <button class="btn btn-outline-primary">Seleccionar Plan</button>
-          </div>
+  <div class="row">
+    <!-- Plan Premium Light -->
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center">Premium Light</h5>
+          <h6 class="card-subtitle mb-2 text-muted text-center">$10 USD/mes</h6>
+          <ul class="list-unstyled text-center">
+            <li>✔ Hasta 20 usuarios</li>
+            <li>✔ 5 entrenamientos mensuales</li>
+            <li>✔ Soporte por mail</li>
+          </ul>
         </div>
-      </div>
-  
-      <!-- Plan Premium Gold -->
-      <div class="col-md-3">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title text-center">Premium Gold</h5>
-            <h6 class="card-subtitle mb-2 text-muted text-center">$20 USD/mes</h6>
-            <ul class="list-unstyled text-center">
-              <li>✔ Hasta 100 usuarios</li>
-              <li>✔ 15 entrenamientos mensuales</li>
-              <li>✔ Soporte 24/7</li>
-            </ul>
-          </div>
-          <div class="card-footer text-center">
-            <button class="btn btn-outline-warning">Seleccionar Plan</button>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Plan Premium Platinum -->
-      <div class="col-md-3">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title text-center">Premium Platinum</h5>
-            <h6 class="card-subtitle mb-2 text-muted text-center">$50 USD/mes</h6>
-            <ul class="list-unstyled text-center">
-              <li>✔ Hasta 500 usuarios</li>
-              <li>✔ Sin límites en entrenamientos</li>
-              <li>✔ Aprendizaje automático en cada escaneo</li>
-              <li>✔ Soporte 24/7 prioritario</li>
-            </ul>
-          </div>
-          <div class="card-footer text-center">
-            <button class="btn btn-outline-success">Seleccionar Plan</button>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Plan Enterprise -->
-      <div class="col-md-3">
-        <div class="card h-100 shadow-sm border-dark">
-          <div class="card-body">
-            <h5 class="card-title text-center">Plan Enterprise</h5>
-            <h6 class="card-subtitle mb-2 text-muted text-center">Consultar Precio</h6>
-            <ul class="list-unstyled text-center">
-              <li>✔ Sin límites de usuarios</li>
-              <li>✔ Sin límites en entrenamientos</li>
-              <li>✔ Aprendizaje automático en cada escaneo</li>
-              <li>✔ Soporte 24/7 prioritario</li>
-            </ul>
-          </div>
-          <div class="card-footer text-center">
-            <button class="btn btn-dark">Consultar Plan</button>
-          </div>
+        <div class="card-footer text-center">
+          <a class="btn btn-outline-primary" [routerLink]="['/admin/checkout', 1]">
+            Seleccionar Plan
+          </a>
         </div>
       </div>
     </div>
-  </div>  
+
+    <!-- Plan Premium Gold -->
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center">Premium Gold</h5>
+          <h6 class="card-subtitle mb-2 text-muted text-center">$20 USD/mes</h6>
+          <ul class="list-unstyled text-center">
+            <li>✔ Hasta 100 usuarios</li>
+            <li>✔ 15 entrenamientos mensuales</li>
+            <li>✔ Soporte 24/7</li>
+          </ul>
+        </div>
+        <div class="card-footer text-center">
+          <a class="btn btn-outline-warning" [routerLink]="['/admin/checkout', 2]">
+            Seleccionar Plan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan Premium Platinum -->
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center">Premium Platinum</h5>
+          <h6 class="card-subtitle mb-2 text-muted text-center">$50 USD/mes</h6>
+          <ul class="list-unstyled text-center">
+            <li>✔ Hasta 500 usuarios</li>
+            <li>✔ Sin límites en entrenamientos</li>
+            <li>✔ Aprendizaje automático en cada escaneo</li>
+            <li>✔ Soporte 24/7 prioritario</li>
+          </ul>
+        </div>
+        <div class="card-footer text-center">
+          <a class="btn btn-outline-success" [routerLink]="['/admin/checkout', 3]">
+            Seleccionar Plan
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan Enterprise -->
+    <div class="col-md-3">
+      <div class="card h-100 shadow-sm border-dark">
+        <div class="card-body">
+          <h5 class="card-title text-center">Plan Enterprise</h5>
+          <h6 class="card-subtitle mb-2 text-muted text-center">Consultar Precio</h6>
+          <ul class="list-unstyled text-center">
+            <li>✔ Sin límites de usuarios</li>
+            <li>✔ Sin límites en entrenamientos</li>
+            <li>✔ Aprendizaje automático en cada escaneo</li>
+            <li>✔ Soporte 24/7 prioritario</li>
+          </ul>
+        </div>
+        <div class="card-footer text-center">
+          <button class="btn btn-dark">Consultar Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

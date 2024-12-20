@@ -1,0 +1,69 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Detalles de Pago</h2>
+
+                    <!-- Mensaje de éxito -->
+                    <div *ngIf="submitted" class="alert alert-success text-center">
+                        ¡Pago realizado con éxito!
+                    </div>
+
+                    <!-- Formulario de pago -->
+                    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" *ngIf="!submitted">
+                        <div class="mb-3 text-center">
+                            <h4>Precio {{ price | currency }}</h4>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cardholderName">Nombre del Titular</label>
+                            <input id="cardholderName" type="text" class="form-control" formControlName="cardholderName"
+                                placeholder="Nombre completo" />
+                            <div *ngIf="checkoutForm.get('cardholderName')?.invalid && checkoutForm.get('cardholderName')?.touched"
+                                class="text-danger">
+                                El nombre es obligatorio.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="cardNumber">Número de Tarjeta</label>
+                            <input id="cardNumber" type="text" class="form-control" formControlName="cardNumber"
+                                placeholder="1234 5678 9123 4567" maxlength="19" />
+                            <div *ngIf="checkoutForm.get('cardNumber')?.invalid && checkoutForm.get('cardNumber')?.touched"
+                                class="text-danger">
+                                El número de tarjeta es inválido.
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="expiryDate">Fecha de Vencimiento</label>
+                                <input id="expiryDate" type="text" class="form-control" formControlName="expiryDate"
+                                    placeholder="MM/YY" maxlength="5" />
+                                <div *ngIf="checkoutForm.get('expiryDate')?.invalid && checkoutForm.get('expiryDate')?.touched"
+                                    class="text-danger">
+                                    Fecha inválida. Use MM/YY.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="cvv">CVV</label>
+                                <input id="cvv" type="password" class="form-control" formControlName="cvv"
+                                    placeholder="123" maxlength="3" />
+                                <div *ngIf="checkoutForm.get('cvv')?.invalid && checkoutForm.get('cvv')?.touched"
+                                    class="text-danger">
+                                    CVV inválido. 3 dígitos.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary w-100" [disabled]="checkoutForm.invalid">
+                                Confirmar Pago
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

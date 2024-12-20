@@ -14,4 +14,10 @@ export const ADMIN_ROUTES: Routes = [
       import('./plans/plans.component').then((m) => m.PlansComponent),
     ...canActivate(() => redirectUnauthorizedTo(['login'])),
   },
+  {
+    path: 'checkout/:plan',
+    loadComponent: () =>
+      import('./checkout/checkout.component').then((m) => m.CheckoutComponent),
+    ...canActivate(() => redirectUnauthorizedTo(['login'])),
+  },
 ];
