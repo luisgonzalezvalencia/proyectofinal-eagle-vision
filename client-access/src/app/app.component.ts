@@ -2,7 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { isPast, parseISO } from 'date-fns';
+import { take } from 'rxjs';
 import { AuthService } from './services/auth.service';
+import { ClientService } from './services/client.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +17,11 @@ export class AppComponent implements OnInit {
   title = 'facedetection';
   isInitialized = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private clientService: ClientService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.authService.isInitialized$.subscribe((initialized) => {
@@ -23,11 +29,11 @@ export class AppComponent implements OnInit {
 
       if (initialized) {
         // Una vez inicializado, maneja el flujo del usuario
-        this.authService.currentUser$.subscribe((user) => {
+        this.authService.currentUser$.pipe(take(1)).subscribe((user) => {
           if (!user) {
             this.router.navigate(['/auth/login']);
           } else {
-            this.authService.currentClient$.subscribe((client) => {
+            this.clientService.currentClient$.subscribe((client) => {
               if (!client || !client.expirationDate) {
                 this.router.navigate(['/auth/subscribe']);
               } else if (isPast(parseISO(client.expirationDate))) {

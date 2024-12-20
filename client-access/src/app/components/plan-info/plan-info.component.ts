@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { differenceInDays, isPast, parseISO } from 'date-fns';
 import { map } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
+import { ClientService } from '../../services/client.service';
 
 @Component({
   selector: 'app-plan-info',
@@ -15,7 +15,7 @@ import { AuthService } from '../../services/auth.service';
 export class PlanInfoComponent {
   planType: 'free' | 'light' | 'gold' | 'platinum' = 'free'; // Tipo de plan actual
 
-  remainingDays$ = this.authService.currentClient$.pipe(
+  remainingDays$ = this.clientService.currentClient$.pipe(
     map((client) => {
       if (
         !client ||
@@ -28,7 +28,7 @@ export class PlanInfoComponent {
     })
   );
 
-  constructor(private authService: AuthService) {}
+  constructor(private clientService: ClientService) {}
 
   formatPlan(plan: 'free' | 'light' | 'gold' | 'platinum'): string {
     const plans = {

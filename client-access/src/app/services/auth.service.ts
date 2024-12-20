@@ -8,7 +8,6 @@ import {
   User,
 } from '@angular/fire/auth';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Client } from '../models';
 import { ClientService } from './client.service';
 
 @Injectable({
@@ -17,33 +16,32 @@ import { ClientService } from './client.service';
 export class AuthService {
   private isInitializedSubject = new BehaviorSubject<boolean>(false);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  private currentClientSubject = new BehaviorSubject<Client | null>(null);
-  private currentToken: string | null = null;
 
   constructor(private auth: Auth, private clientService: ClientService) {
     this.auth.onAuthStateChanged((user) => {
       this.currentUserSubject.next(user);
 
       if (user) {
-        this.clientService.get(user.uid).subscribe(async (client) => {
-          this.currentClientSubject.next(client);
-          this.isInitializedSubject.next(true);
-          this.currentToken = await user.getIdToken();
+        const subscription = this.clientService.get(user.uid).subscribe({
+          next: async () => {
+            this.isInitializedSubject.next(true);
+          },
+          error: (err) => {
+            console.error('Error al obtener el cliente:', err);
+            this.isInitializedSubject.next(true);
+          },
+          complete: () => {
+            subscription.unsubscribe();
+          },
         });
       } else {
-        this.currentClientSubject.next(null);
         this.isInitializedSubject.next(true);
-        this.currentToken = null;
       }
     });
   }
 
   get currentUser$(): Observable<User | null> {
     return this.currentUserSubject.asObservable();
-  }
-
-  get currentClient$(): Observable<Client | null> {
-    return this.currentClientSubject.asObservable();
   }
 
   get isInitialized$(): Observable<boolean> {
@@ -54,28 +52,8 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  get currentClient(): Client | null {
-    return this.currentClientSubject.value;
-  }
-
   get userId(): string | null {
     return this.currentUserSubject.value?.uid || null;
-  }
-
-  get userAccessToken(): string | null {
-    return this.currentToken;
-  }
-
-  refreshCurrentClient() {
-    let userId = this.currentUser?.uid;
-    if (!userId) {
-      return;
-    }
-
-    this.clientService.get(userId).subscribe(async (client) => {
-      this.currentClientSubject.next(client);
-      this.isInitializedSubject.next(true);
-    });
   }
 
   // Sign in with email and password

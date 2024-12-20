@@ -8,14 +8,15 @@
             <div class="alert alert-success" role="alert" *ngIf="copySuccess">
                 {{copySuccess}}
             </div>
-            <div class="input-group" *ngIf="client.token">
-                <input [type]="isHashed ? 'password' : 'text'" class="form-control" placeholder="Token generado"
-                    disabled [value]="client.token" />
+            <div class="input-group">
+                <input [type]="isHashed && client.token ? 'password' : 'text'" class="form-control"
+                    placeholder="Genere un token para utilizar el SDK" disabled [value]="client.token || ''" />
                 <button class="btn btn-outline-secondary" type="button" title="Mostrar Token"
-                    (click)="toggleViewToken()">
+                    (click)="toggleViewToken()" *ngIf="client.token">
                     <i class="bi bi-eye"></i>
                 </button>
-                <button class="btn btn-outline-secondary" type="button" title="Copiar Token" (click)="copyToken()">
+                <button class="btn btn-outline-secondary" type="button" title="Copiar Token" (click)="copyToken()"
+                    *ngIf="client.token">
                     <i class="bi bi-clipboard"></i>
                 </button>
             </div>

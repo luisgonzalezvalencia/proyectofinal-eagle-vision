@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 export interface Toast {
   template: string;
-  classname?: string;
+  type: 'success' | 'error' | 'warning' | 'info' | 'default';
+  loading?: boolean;
   delay?: number;
   icon?: string;
 }
@@ -11,39 +12,41 @@ export interface Toast {
 export class ToastService {
   toasts: Toast[] = [];
 
-  show(template: string, options: Partial<Toast> = {}): void {
-    this.toasts.push({ template, ...options });
+  show(template: string, options: Partial<Toast> = {}): Toast {
+    const toast = { template, ...options, type: options.type || 'default' };
+    this.toasts.push(toast);
+    return toast;
   }
 
-  success(message: string, delay = 5000): void {
-    this.show(message, {
-      classname: 'bg-success text-white',
+  success(message: string, delay = 5000, icon?: string): Toast {
+    return this.show(message, {
+      type: 'success',
       delay,
-      icon: 'bi-check-circle',
+      icon,
     });
   }
 
-  error(message: string, delay = 5000): void {
-    this.show(message, {
-      classname: 'bg-danger text-white',
+  error(message: string, delay = 5000, icon?: string): Toast {
+    return this.show(message, {
+      type: 'error',
       delay,
-      icon: 'bi-x-circle',
+      icon,
     });
   }
 
-  warning(message: string, delay = 5000): void {
-    this.show(message, {
-      classname: 'bg-warning text-dark',
+  warning(message: string, delay = 5000, icon?: string): Toast {
+    return this.show(message, {
+      type: 'warning',
       delay,
-      icon: 'bi-exclamation-triangle',
+      icon,
     });
   }
 
-  info(message: string, delay = 5000): void {
-    this.show(message, {
-      classname: 'bg-info text-white',
+  info(message: string, delay = 5000, icon?: string): Toast {
+    return this.show(message, {
+      type: 'info',
       delay,
-      icon: 'bi-info-circle',
+      icon,
     });
   }
 

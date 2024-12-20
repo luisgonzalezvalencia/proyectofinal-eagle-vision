@@ -1,17 +1,16 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { of, switchMap } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
-import { ClientService } from '../../services/client.service';
 import { CheckService } from '../../services/check.service';
-import { ToastService } from '../../services/toast.service';
-import { NgIf } from '@angular/common';
+import { ClientService } from '../../services/client.service';
 import { HttpRequestService } from '../../services/http-request.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-training',
   standalone: true,
   templateUrl: './training.component.html',
-  imports: [NgIf, ],
+  imports: [NgIf],
   providers: [CheckService, HttpRequestService],
 })
 export class TrainingComponent {
@@ -20,12 +19,11 @@ export class TrainingComponent {
   isTraining: boolean = false;
 
   constructor(
-    private authService: AuthService,
     private clientService: ClientService,
     private checkService: CheckService,
     private toastService: ToastService
   ) {
-    this.authService.currentClient$
+    this.clientService.currentClient$
       .pipe(
         switchMap((client) => {
           if (!client || !client.clientId) {
@@ -49,16 +47,15 @@ export class TrainingComponent {
     this.isTraining = true;
     let data = new FormData();
     data.append('client_id', this.clientId?.toString());
-    this.checkService.startTraining(data).subscribe(
-      (response) => {
+    this.checkService.startTraining(data).subscribe((response) => {
       this.isTraining = false;
-      if(!response.error){
+      if (!response.error) {
         this.toastService.success(
           response.message ?? 'Entrenamiento realizado.'
         );
-      }else{
+      } else {
         this.toastService.error(response.error);
       }
-    })
+    });
   }
 }

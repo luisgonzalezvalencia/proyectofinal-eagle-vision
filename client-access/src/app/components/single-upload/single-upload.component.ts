@@ -1,4 +1,5 @@
 import { NgIf } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import {
   FormControl,
@@ -6,12 +7,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { delay, of, switchMap, take } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
-import { ToastService } from '../../services/toast.service';
+import { switchMap, take } from 'rxjs';
 import { CheckService } from '../../services/check.service';
-import { HttpClientModule } from '@angular/common/http';
+import { ClientService } from '../../services/client.service';
 import { HttpRequestService } from '../../services/http-request.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-single-upload',
@@ -29,10 +29,10 @@ export class SingleUploadComponent {
   uploading: boolean = false;
 
   constructor(
-    private authService: AuthService,
+    private clientService: ClientService,
     private toastService: ToastService,
     private checkService: CheckService
-  ) { }
+  ) {}
 
   // Evento que se dispara al seleccionar un archivo
   onFileSelected(event: Event): void {
@@ -63,7 +63,7 @@ export class SingleUploadComponent {
     const userId = this.uploadForm.value.userId;
     this.uploading = true;
 
-    this.authService.currentClient$
+    this.clientService.currentClient$
       .pipe(
         take(1),
         switchMap((client) => {

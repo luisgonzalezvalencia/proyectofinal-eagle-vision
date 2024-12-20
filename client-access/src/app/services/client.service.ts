@@ -10,7 +10,7 @@ import {
   where,
 } from '@angular/fire/firestore';
 import { addDays, formatISO } from 'date-fns';
-import { from, map, Observable } from 'rxjs';
+import { BehaviorSubject, from, map, Observable, tap } from 'rxjs';
 import { MAX_PERIOD_TRIAL } from '../constants';
 import { Client, UserClient } from '../models';
 @Injectable({
@@ -19,7 +19,17 @@ import { Client, UserClient } from '../models';
 export class ClientService {
   private clientCollection = 'clients';
   private usersClientCollection = 'usersClient';
-  constructor(private firestore: Firestore) { }
+  private currentClientSubject = new BehaviorSubject<Client | null>(null);
+
+  constructor(private firestore: Firestore) {}
+
+  get currentClient$(): Observable<Client | null> {
+    return this.currentClientSubject.asObservable();
+  }
+
+  get currentClient(): Client | null {
+    return this.currentClientSubject.value;
+  }
 
   get(userId: string): Observable<Client | null> {
     const colRef = collection(this.firestore, this.clientCollection);
@@ -28,25 +38,33 @@ export class ClientService {
       map((snapshot) => {
         const doc = snapshot.docs[0];
         return doc ? ({ id: doc.id, ...doc.data() } as Client) : null;
-      })
+      }),
+      tap((client) => this.currentClientSubject.next(client))
     );
   }
 
-  set(data: Omit<Client, 'id'>): Observable<string> {
+  add(data: Omit<Client, 'id'>): Observable<string> {
     const colRef = collection(this.firestore, this.clientCollection);
-    return from(addDoc(colRef, data)).pipe(map((docRef) => docRef.id));
+    return from(addDoc(colRef, data)).pipe(
+      map((docRef) => docRef.id),
+      tap((id) => this.currentClientSubject.next({ id, ...data }))
+    );
   }
 
   update(clientId: string, data: Partial<Client>): Observable<void> {
     const docRef = doc(this.firestore, `${this.clientCollection}/${clientId}`);
-    return from(updateDoc(docRef, data));
+    return from(updateDoc(docRef, data)).pipe(
+      tap(() => {
+        // Current client should never be null here
+        this.currentClientSubject.next({ ...this.currentClient!, ...data });
+      })
+    );
   }
 
   startSubscription(userId: string): Observable<string> {
     const uniqueId = this.generateUniqueInteger();
     const expirationDate = addDays(new Date(), MAX_PERIOD_TRIAL);
-
-    return this.set({
+    return this.add({
       clientId: uniqueId,
       expirationDate: formatISO(expirationDate),
       userId,
@@ -65,11 +83,9 @@ export class ClientService {
 
     return from(getDocs(q)).pipe(
       map((snapshot) =>
-        snapshot.docs.map(
-          (doc) => {
-            return { userId: doc.id, ...doc.data() } as UserClient
-          }
-        )
+        snapshot.docs.map((doc) => {
+          return { userId: doc.id, ...doc.data() } as UserClient;
+        })
       )
     );
   }

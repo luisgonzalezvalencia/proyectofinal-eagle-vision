@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { switchMap, take } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { CheckService } from '../../services/check.service';
+import { ClientService } from '../../services/client.service';
 import { HttpRequestService } from '../../services/http-request.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -21,6 +22,7 @@ export class BulkUploadComponent {
 
   constructor(
     private authService: AuthService,
+    private clientService: ClientService,
     private checkService: CheckService,
     private toastService: ToastService
   ) {}
@@ -47,7 +49,7 @@ export class BulkUploadComponent {
   // Envía el archivo al servidor
   uploadFile(file: File): void {
     this.uploading = true;
-    this.authService.currentClient$
+    this.clientService.currentClient$
       .pipe(
         take(1),
         switchMap((client) => {
