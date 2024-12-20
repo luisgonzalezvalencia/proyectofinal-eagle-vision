@@ -18,7 +18,7 @@ export class TokenGeneratorComponent {
   constructor(
     private authService: AuthService,
     private clientService: ClientService
-  ) {}
+  ) { }
 
   generateToken() {
     if (!this.authService.currentClient) {
@@ -26,7 +26,10 @@ export class TokenGeneratorComponent {
     }
     this.clientService
       .generateToken(this.authService.currentClient.id)
-      .subscribe();
+      .subscribe(() => {
+        // Actualizar el cliente después de generar el token
+        this.authService.refreshCurrentClient();
+      });
   }
 
   copyToken(): void {

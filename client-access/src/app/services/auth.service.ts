@@ -66,6 +66,18 @@ export class AuthService {
     return this.currentToken;
   }
 
+  refreshCurrentClient() {
+    let userId = this.currentUser?.uid;
+    if (!userId) {
+      return;
+    }
+
+    this.clientService.get(userId).subscribe(async (client) => {
+      this.currentClientSubject.next(client);
+      this.isInitializedSubject.next(true);
+    });
+  }
+
   // Sign in with email and password
   async signIn(email: string, password: string): Promise<User | null> {
     try {
