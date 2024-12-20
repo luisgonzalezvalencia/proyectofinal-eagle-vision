@@ -6,8 +6,9 @@
         </p>
 
         <div class="text-center">
-            <button class="btn btn-success" type="button" [disabled]="!canTrain" (click)="startTraining()">
-                <i class="bi bi-play-circle"></i> Iniciar Entrenamiento
+            <button class="btn btn-success" type="button" [disabled]="!canTrain || isTraining" (click)="startTraining()">
+                <i *ngIf="isTraining" class="spinner-border spinner-border-sm mr-1"></i>
+                <i *ngIf="!isTraining" class="bi bi-play-circle"></i> Iniciar Entrenamiento
             </button>
         </div>
         <div *ngIf="isTraining" class="alert alert-info mt-3">
